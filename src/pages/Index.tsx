@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+
 import { Link } from 'react-router-dom';
 import { ArrowRight, Calendar, Briefcase, Users, MessageSquare } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
@@ -19,15 +20,18 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 }
 };
 
+
+
 export default function Index() {
   return (
     <Layout>
+
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-secondary/20" />
         <div className="absolute top-20 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-teal/5 rounded-full blur-3xl" />
-        
+
         <div className="section-container relative z-10 py-20">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -43,7 +47,7 @@ export default function Index() {
                 <span className="block gradient-text">Meets Tomorrow</span>
               </h1>
               <p className="text-xl text-muted-foreground mb-8 max-w-lg leading-relaxed">
-                A premium platform connecting our community through shared experiences, 
+                A premium platform connecting our community through shared experiences,
                 meaningful opportunities, and lasting relationships.
               </p>
               <div className="flex flex-wrap gap-4">
@@ -249,7 +253,7 @@ export default function Index() {
               Join a Thriving Community of <span className="gradient-text">10,000+ Members</span>
             </h2>
             <p className="text-xl text-muted-foreground mb-10">
-              Connect with professionals, entrepreneurs, and families who share your values. 
+              Connect with professionals, entrepreneurs, and families who share your values.
               Discover opportunities, build relationships, and grow together.
             </p>
             <div className="flex flex-wrap justify-center gap-4">

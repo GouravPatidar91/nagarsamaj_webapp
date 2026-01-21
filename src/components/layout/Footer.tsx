@@ -48,7 +48,7 @@ export function Footer() {
 
         <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} Nagar Samaj. All rights reserved.</p>
-          <p>Built with care for our community.</p>
+          <p>Made by DNP Studio</p>
         </div>
       </div>
     </footer>
