@@ -10,14 +10,14 @@ import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
-  useMatrimonyProfiles, 
-  useMatrimonyInterests, 
-  useSendInterest, 
+import {
+  useMatrimonyProfiles,
+  useMatrimonyInterests,
+  useSendInterest,
   useMyMatrimonyProfile,
   useCreateMatrimonyProfile,
   useUpdateMatrimonyProfile,
-  type MatrimonyProfile 
+  type MatrimonyProfile
 } from '@/hooks/useMatrimony';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -57,7 +57,7 @@ function MatrimonyContent() {
   const [isEditing, setIsEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   // Form state
   const [formData, setFormData] = useState({
     full_name: '',
@@ -70,7 +70,7 @@ function MatrimonyContent() {
     photo_url: '',
   });
 
-  const handleInterest = async (profileId: string, profileName: string) => {
+  const handleInterest = async (profileId: string, profileName: string, profileOwnerId: string) => {
     if (!user) return;
 
     if (interestedProfileIds.includes(profileId)) {
@@ -79,7 +79,11 @@ function MatrimonyContent() {
     }
 
     try {
-      await sendInterestMutation.mutateAsync({ profileId, userId: user.id });
+      await sendInterestMutation.mutateAsync({
+        profileId,
+        userId: user.id,
+        profileOwnerId, // Pass the profile owner's user_id for notification
+      });
       toast({
         title: 'Interest expressed',
         description: `${profileName} will be notified of your interest.`,
@@ -138,7 +142,7 @@ function MatrimonyContent() {
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}/${Date.now()}.${fileExt}`;
-      
+
       const { error: uploadError } = await supabase.storage
         .from('matrimony-photos')
         .upload(fileName, file, { upsert: true });
@@ -153,10 +157,10 @@ function MatrimonyContent() {
       toast({ title: 'Photo uploaded', description: 'Your photo has been uploaded successfully.' });
     } catch (error: any) {
       console.error('Upload error:', error);
-      toast({ 
-        title: 'Upload failed', 
+      toast({
+        title: 'Upload failed',
         description: error.message || 'Failed to upload photo. Please try again.',
-        variant: 'destructive' 
+        variant: 'destructive'
       });
     } finally {
       setIsUploading(false);
@@ -199,17 +203,17 @@ function MatrimonyContent() {
           photo_url: formData.photo_url || null,
           status: 'pending',
         });
-        toast({ 
-          title: 'Profile submitted', 
-          description: 'Your profile has been submitted for review. It will be visible once approved.' 
+        toast({
+          title: 'Profile submitted',
+          description: 'Your profile has been submitted for review. It will be visible once approved.'
         });
       }
       setShowCreateForm(false);
     } catch (error: any) {
-      toast({ 
-        title: 'Failed to save profile', 
+      toast({
+        title: 'Failed to save profile',
         description: error.message || 'Something went wrong',
-        variant: 'destructive' 
+        variant: 'destructive'
       });
     }
   };
@@ -386,7 +390,7 @@ function MatrimonyContent() {
                     <Button
                       variant={interestedProfileIds.includes(profile.id) ? 'secondary' : 'default'}
                       className={!interestedProfileIds.includes(profile.id) ? 'btn-gold' : ''}
-                      onClick={() => handleInterest(profile.id, profile.full_name)}
+                      onClick={() => handleInterest(profile.id, profile.full_name, profile.user_id)}
                       disabled={interestedProfileIds.includes(profile.id) || sendInterestMutation.isPending}
                     >
                       {interestedProfileIds.includes(profile.id) ? (
@@ -471,7 +475,7 @@ function MatrimonyContent() {
                 <Button
                   className={`flex-1 ${!interestedProfileIds.includes(selectedProfile.id) ? 'btn-gold' : ''}`}
                   variant={interestedProfileIds.includes(selectedProfile.id) ? 'secondary' : 'default'}
-                  onClick={() => handleInterest(selectedProfile.id, selectedProfile.full_name)}
+                  onClick={() => handleInterest(selectedProfile.id, selectedProfile.full_name, selectedProfile.user_id)}
                   disabled={interestedProfileIds.includes(selectedProfile.id) || sendInterestMutation.isPending}
                 >
                   {interestedProfileIds.includes(selectedProfile.id) ? (
@@ -631,15 +635,15 @@ function MatrimonyContent() {
             </div>
 
             <div className="flex gap-3 pt-4">
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="flex-1 btn-gold"
                 disabled={createProfileMutation.isPending || updateProfileMutation.isPending}
               >
-                {createProfileMutation.isPending || updateProfileMutation.isPending 
-                  ? 'Saving...' 
-                  : isEditing 
-                    ? 'Update Profile' 
+                {createProfileMutation.isPending || updateProfileMutation.isPending
+                  ? 'Saving...'
+                  : isEditing
+                    ? 'Update Profile'
                     : 'Submit Profile'}
               </Button>
               <Button type="button" variant="outline" onClick={() => setShowCreateForm(false)}>

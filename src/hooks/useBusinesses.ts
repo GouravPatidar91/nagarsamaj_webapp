@@ -31,6 +31,7 @@ export function useBusinesses(category?: string, searchQuery?: string, includeAl
       if (error) throw error;
       return data as Business[];
     },
+    refetchInterval: 30000, // Auto-refresh every 30 seconds
   });
 }
 

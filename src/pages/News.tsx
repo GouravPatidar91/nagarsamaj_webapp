@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
-import { articles, categories } from '@/data/mockData';
+import { useArticles } from '@/hooks/useArticles';
+import { Loader2 } from 'lucide-react';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -19,10 +20,22 @@ const itemVariants = {
 
 export default function News() {
   const [activeCategory, setActiveCategory] = useState('All');
+  const { data: articles, isLoading } = useArticles(activeCategory === 'All' ? undefined : activeCategory);
 
-  const filteredArticles = activeCategory === 'All' 
-    ? articles 
-    : articles.filter(a => a.category === activeCategory);
+  // Get unique categories from articles
+  const categories = ['All', ...Array.from(new Set(articles?.map(a => a.category) || []))];
+
+  const filteredArticles = articles || [];
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -50,11 +63,10 @@ export default function News() {
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  activeCategory === category
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-                }`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeCategory === category
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                  }`}
               >
                 {category}
               </button>
@@ -73,7 +85,7 @@ export default function News() {
                 <div className="grid md:grid-cols-2 gap-8 card-elevated p-0 overflow-hidden">
                   <div className="aspect-[4/3] md:aspect-auto overflow-hidden">
                     <img
-                      src={filteredArticles[0].image}
+                      src={filteredArticles[0].image_url || 'https://images.unsplash.com/photo-1585776245991-cf89dd7fc73a?w=800'}
                       alt={filteredArticles[0].title}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
@@ -87,11 +99,9 @@ export default function News() {
                     </h2>
                     <p className="text-muted-foreground mb-6">{filteredArticles[0].excerpt}</p>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span>{filteredArticles[0].author}</span>
+                      <span>{new Date(filteredArticles[0].published_at || filteredArticles[0].created_at).toLocaleDateString()}</span>
                       <span>•</span>
-                      <span>{new Date(filteredArticles[0].date).toLocaleDateString()}</span>
-                      <span>•</span>
-                      <span>{filteredArticles[0].readTime}</span>
+                      <span>{filteredArticles[0].category}</span>
                     </div>
                   </div>
                 </div>
@@ -111,7 +121,7 @@ export default function News() {
                 <Link to={`/news/${article.id}`} className="block card-elevated group overflow-hidden p-0">
                   <div className="aspect-video overflow-hidden">
                     <img
-                      src={article.image}
+                      src={article.image_url || 'https://images.unsplash.com/photo-1585776245991-cf89dd7fc73a?w=800'}
                       alt={article.title}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
@@ -123,9 +133,7 @@ export default function News() {
                     </h3>
                     <p className="text-muted-foreground text-sm line-clamp-2">{article.excerpt}</p>
                     <div className="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
-                      <span>{article.author}</span>
-                      <span>•</span>
-                      <span>{article.readTime}</span>
+                      <span>{new Date(article.published_at || article.created_at).toLocaleDateString()}</span>
                     </div>
                   </div>
                 </Link>

@@ -28,6 +28,7 @@ export function useEvents(filter?: 'all' | 'upcoming' | 'past') {
       if (error) throw error;
       return data as Event[];
     },
+    refetchInterval: 30000, // Auto-refresh every 30 seconds
   });
 }
 
@@ -68,7 +69,7 @@ export function useEventRegistration(eventId: string, userId?: string) {
     queryKey: ['event-registration', eventId, userId],
     queryFn: async () => {
       if (!userId) return null;
-      
+
       const { data, error } = await supabase
         .from('event_registrations')
         .select('*')

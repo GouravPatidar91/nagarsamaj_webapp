@@ -19,6 +19,7 @@ export function useMatrimonyProfiles() {
       if (error) throw error;
       return data as MatrimonyProfile[];
     },
+    refetchInterval: 30000, // Auto-refresh every 30 seconds
   });
 }
 
@@ -82,11 +83,28 @@ export function useSendInterest() {
       profileId,
       userId,
       message,
+      profileOwnerId, // Need to pass the profile owner's user_id
     }: {
       profileId: string;
       userId: string;
       message?: string;
+      profileOwnerId: string;
     }) => {
+      // 1. Get the interested user's profile details
+      const { data: interestedUser } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('user_id', userId)
+        .single();
+
+      // 2. Get the matrimony profile details
+      const { data: matrimonyProfile } = await supabase
+        .from('matrimony_profiles')
+        .select('full_name')
+        .eq('id', profileId)
+        .single();
+
+      // 3. Insert the interest record
       const { data, error } = await supabase
         .from('matrimony_interests')
         .insert({
@@ -98,10 +116,34 @@ export function useSendInterest() {
         .single();
 
       if (error) throw error;
+
+      // 4. Create notification/activity log for the profile owner
+      const { error: logError } = await supabase
+        .from('activity_logs')
+        .insert({
+          user_id: profileOwnerId,
+          action: 'matrimony_interest_received',
+          entity_type: 'matrimony_interest',
+          entity_id: data.id,
+          details: {
+            from_user_id: userId,
+            from_user_name: interestedUser?.full_name || 'Unknown User',
+            profile_id: profileId,
+            profile_name: matrimonyProfile?.full_name || 'Unknown',
+            message: message || null,
+          },
+        });
+
+      if (logError) {
+        console.error('Failed to create notification:', logError);
+        // Don't throw - interest was still created successfully
+      }
+
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['matrimony-interests'] });
+      queryClient.invalidateQueries({ queryKey: ['activity-logs'] });
     },
   });
 }

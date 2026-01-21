@@ -93,38 +93,87 @@ export function AdminActivityLogsTab() {
       </div>
 
       <div className="divide-y divide-border/30">
-        {filteredLogs?.map((log) => (
-          <div key={log.id} className="p-4 hover:bg-card/50 transition-colors">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
-                {getEntityIcon(log.entity_type)}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className={`px-2 py-0.5 rounded text-xs font-medium ${getActionColor(log.action)}`}>
-                    {log.action}
+        {filteredLogs?.map((log) => {
+          // Parse details to extract user-friendly information
+          const details = typeof log.details === 'object' ? (log.details as any) : null;
+          const getDetailText = () => {
+            if (log.action === 'job_application_received') console.log('Job App Details:', log.details);
+            if (log.action === 'job_application_received' && details) {
+              return (
+                <div className="flex flex-col gap-1 items-start">
+                  <span>
+                    <span className="font-medium">{details.applicant_name || 'Unknown User'}</span> applied for "<span className="font-medium">{details.job_title}</span>"
                   </span>
-                  {log.entity_type && (
-                    <span className="text-xs text-muted-foreground capitalize">
-                      on {log.entity_type}
-                    </span>
-                  )}
+                  <div className="text-sm text-muted-foreground grid grid-cols-1 gap-y-1 mt-1 w-full">
+                    {details.applicant_email && (
+                      <span className="flex items-center gap-2">
+                        📧 {details.applicant_email}
+                      </span>
+                    )}
+                    {details.applicant_phone && (
+                      <span className="flex items-center gap-2">
+                        📱 {details.applicant_phone}
+                      </span>
+                    )}
+                    {details.applicant_address && (
+                      <span className="flex items-center gap-2">
+                        📍 {details.applicant_address}
+                      </span>
+                    )}
+                    {details.resume_link && (
+                      <a
+                        href={details.resume_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline flex items-center gap-2 mt-1 font-medium w-fit"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        📄 View Resume / CV
+                      </a>
+                    )}
+                  </div>
                 </div>
-                {log.details && (
-                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                    {typeof log.details === 'object' 
-                      ? JSON.stringify(log.details).slice(0, 100) + '...'
-                      : String(log.details)
-                    }
+              );
+            }
+            if (log.action === 'matrimony_interest_received' && details) {
+              return `${details.from_user_name || 'Unknown User'} expressed interest in ${details.profile_name || 'a profile'}`;
+            }
+            // Fallback to JSON stringify for other types
+            return typeof log.details === 'object'
+              ? JSON.stringify(log.details).slice(0, 100) + '...'
+              : String(log.details);
+          };
+
+          return (
+            <div key={log.id} className="p-4 hover:bg-card/50 transition-colors">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
+                  {getEntityIcon(log.entity_type)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${getActionColor(log.action)}`}>
+                      {log.action.replace(/_/g, ' ')}
+                    </span>
+                    {log.entity_type && (
+                      <span className="text-xs text-muted-foreground capitalize">
+                        on {log.entity_type.replace(/_/g, ' ')}
+                      </span>
+                    )}
+                  </div>
+                  {log.details && (
+                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                      {getDetailText()}
+                    </p>
+                  )}
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {new Date(log.created_at).toLocaleString()}
                   </p>
-                )}
-                <p className="text-xs text-muted-foreground mt-2">
-                  {new Date(log.created_at).toLocaleString()}
-                </p>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
         {(!filteredLogs || filteredLogs.length === 0) && (
           <div className="py-12 text-center text-muted-foreground">
             <Activity className="w-12 h-12 mx-auto mb-4 opacity-50" />

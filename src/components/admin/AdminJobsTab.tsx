@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Plus, Trash2, Edit, MoreHorizontal, Check, X } from 'lucide-react';
+import { Plus, Trash2, Edit, MoreHorizontal, Check, X, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { AdminJobApplicants } from './AdminJobApplicants';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -67,6 +68,7 @@ export function AdminJobsTab() {
   const [form, setForm] = useState<JobForm>(defaultForm);
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [viewApplicantsJob, setViewApplicantsJob] = useState<{ id: string, title: string } | null>(null);
 
   const handleSubmit = async () => {
     if (!form.title || !form.company || !form.description) {
@@ -162,7 +164,7 @@ export function AdminJobsTab() {
 
   const filteredJobs = jobs?.filter(job => {
     const matchesStatus = statusFilter === 'all' || job.status === statusFilter;
-    const matchesSearch = !searchQuery || 
+    const matchesSearch = !searchQuery ||
       job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.company.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesStatus && matchesSearch;
@@ -240,6 +242,9 @@ export function AdminJobsTab() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="bg-card border-border">
+                      <DropdownMenuItem onClick={() => setViewApplicantsJob({ id: job.id, title: job.title })}>
+                        <Users className="w-4 h-4 mr-2" /> View Applicants
+                      </DropdownMenuItem>
                       {job.status === 'pending' && (
                         <>
                           <DropdownMenuItem onClick={() => handleStatusChange(job.id, 'approved')}>
@@ -369,6 +374,14 @@ export function AdminJobsTab() {
               {createMutation.isPending || updateMutation.isPending ? 'Saving...' : editingId ? 'Update' : 'Create'}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!viewApplicantsJob} onOpenChange={(open) => !open && setViewApplicantsJob(null)}>
+        <DialogContent className="bg-card border-border max-w-4xl max-h-[90vh]">
+          {viewApplicantsJob && (
+            <AdminJobApplicants jobId={viewApplicantsJob.id} jobTitle={viewApplicantsJob.title} />
+          )}
         </DialogContent>
       </Dialog>
     </>

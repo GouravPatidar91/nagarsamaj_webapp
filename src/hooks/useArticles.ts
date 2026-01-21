@@ -27,6 +27,7 @@ export function useArticles(category?: string, includeAll?: boolean) {
       if (error) throw error;
       return data as Article[];
     },
+    refetchInterval: 30000, // Auto-refresh every 30 seconds
   });
 }
 

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, LogOut, User } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
+import { NotificationBell } from '@/components/shared/NotificationBell';
 
 const navLinks = [
   { name: 'Home', href: '/' },
@@ -49,18 +50,16 @@ export function Navbar() {
               <Link
                 key={link.name}
                 to={link.href}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  isActive(link.href)
-                    ? 'text-primary bg-primary/10'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
-                }`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isActive(link.href)
+                  ? 'text-primary bg-primary/10'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+                  }`}
               >
                 {link.name}
               </Link>
             ))}
           </div>
 
-          {/* Desktop CTA */}
           <div className="hidden lg:flex items-center gap-4">
             {isAuthenticated ? (
               <div className="flex items-center gap-4">
@@ -71,6 +70,7 @@ export function Navbar() {
                     </Button>
                   </Link>
                 )}
+                <NotificationBell />
                 <div className="flex items-center gap-2 text-sm">
                   <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
                     <User className="w-4 h-4" />
@@ -122,11 +122,10 @@ export function Navbar() {
                     key={link.name}
                     to={link.href}
                     onClick={() => setIsOpen(false)}
-                    className={`block px-4 py-3 rounded-lg text-base font-medium transition-all ${
-                      isActive(link.href)
-                        ? 'text-primary bg-primary/10'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
-                    }`}
+                    className={`block px-4 py-3 rounded-lg text-base font-medium transition-all ${isActive(link.href)
+                      ? 'text-primary bg-primary/10'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+                      }`}
                   >
                     {link.name}
                   </Link>
