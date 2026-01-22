@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { useArticles } from '@/hooks/useArticles';
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -19,6 +20,7 @@ const itemVariants = {
 };
 
 export default function News() {
+  const { t } = useTranslation();
   const [activeCategory, setActiveCategory] = useState('All');
   const { data: articles, isLoading } = useArticles(activeCategory === 'All' ? undefined : activeCategory);
 
@@ -46,9 +48,9 @@ export default function News() {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-3xl mb-12"
           >
-            <h1 className="heading-display mb-4">Community News</h1>
+            <h1 className="heading-display mb-4">{t('news_page_title')}</h1>
             <p className="text-xl text-muted-foreground">
-              Stay informed with the latest stories, updates, and announcements from our community.
+              {t('news_page_subtitle')}
             </p>
           </motion.div>
 
@@ -68,7 +70,7 @@ export default function News() {
                   : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                   }`}
               >
-                {category}
+                {t(`cat_${category.toLowerCase()}`)}
               </button>
             ))}
           </motion.div>
@@ -143,7 +145,7 @@ export default function News() {
 
           {filteredArticles.length === 0 && (
             <div className="text-center py-20">
-              <p className="text-muted-foreground">No articles found in this category.</p>
+              <p className="text-muted-foreground">{t('no_articles')}</p>
             </div>
           )}
         </div>

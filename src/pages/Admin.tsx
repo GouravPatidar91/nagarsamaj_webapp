@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
+import {
   Users, FileText, Calendar, Briefcase, Heart, Building2, MessageSquare,
   AlertCircle, Flag, Activity
 } from 'lucide-react';
@@ -9,6 +9,7 @@ import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useTranslation } from 'react-i18next';
 
 import { AdminUsersTab } from '@/components/admin/AdminUsersTab';
 import { AdminArticlesTab } from '@/components/admin/AdminArticlesTab';
@@ -33,6 +34,7 @@ const tabs = [
 ];
 
 function AdminContent() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('users');
 
   // Fetch counts for stats
@@ -129,8 +131,8 @@ function AdminContent() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <h1 className="text-3xl font-display font-bold mb-2">Admin Dashboard</h1>
-            <p className="text-muted-foreground">Manage all aspects of the community platform.</p>
+            <h1 className="text-3xl font-display font-bold mb-2">{t('admin_dashboard')}</h1>
+            <p className="text-muted-foreground">{t('admin_subtitle')}</p>
           </motion.div>
 
           {/* Pending Items Alert */}
@@ -142,7 +144,7 @@ function AdminContent() {
             >
               <AlertCircle className="w-5 h-5 text-yellow-500" />
               <p className="text-sm">
-                <span className="font-semibold">{pendingStats.total} items pending approval:</span>{' '}
+                <span className="font-semibold">{pendingStats.total} {t('pending_items')}:</span>{' '}
                 {pendingStats.events > 0 && `${pendingStats.events} events`}
                 {pendingStats.jobs > 0 && `, ${pendingStats.jobs} jobs`}
                 {pendingStats.matrimony > 0 && `, ${pendingStats.matrimony} matrimony profiles`}
@@ -162,9 +164,8 @@ function AdminContent() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`card-elevated p-4 text-left transition-all ${
-                  activeTab === tab.id ? 'ring-2 ring-primary' : ''
-                }`}
+                className={`card-elevated p-4 text-left transition-all ${activeTab === tab.id ? 'ring-2 ring-primary' : ''
+                  }`}
               >
                 <tab.icon className="w-5 h-5 text-primary mb-2" />
                 {statsLoading ? (
@@ -172,7 +173,7 @@ function AdminContent() {
                 ) : (
                   <p className="text-2xl font-bold">{stats?.[tab.id as keyof typeof stats] || 0}</p>
                 )}
-                <p className="text-xs text-muted-foreground">{tab.name}</p>
+                <p className="text-xs text-muted-foreground">{t(`tab_${tab.id}`)}</p>
               </button>
             ))}
           </motion.div>
@@ -188,14 +189,13 @@ function AdminContent() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-                }`}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === tab.id
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                  }`}
               >
                 <tab.icon className="w-4 h-4" />
-                {tab.name}
+                {t(`tab_${tab.id}`)}
               </button>
             ))}
           </motion.div>

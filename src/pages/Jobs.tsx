@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useJobs, useSavedJobs, useSaveJob, useUnsaveJob, useApplyToJob } from '@/hooks/useJobs';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 
 import { JobApplicationDialog, JobApplicationFormData } from '@/components/jobs/JobApplicationDialog';
 
@@ -24,6 +25,7 @@ const itemVariants = {
 };
 
 function JobsContent() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { data: jobs, isLoading } = useJobs();
   const { data: savedJobIds } = useSavedJobs(user?.id);
@@ -58,8 +60,8 @@ function JobsContent() {
           <div className="section-container">
             <div className="text-center py-20">
               <Briefcase className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-              <h2 className="text-2xl font-display font-bold mb-2">No Jobs Available</h2>
-              <p className="text-muted-foreground">Check back soon for new opportunities!</p>
+              <h2 className="text-2xl font-display font-bold mb-2">{t('no_jobs_title')}</h2>
+              <p className="text-muted-foreground">{t('no_jobs_desc')}</p>
             </div>
           </div>
         </section>
@@ -131,9 +133,9 @@ function JobsContent() {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-3xl mb-12"
           >
-            <h1 className="heading-display mb-4">Job Board</h1>
+            <h1 className="heading-display mb-4">{t('jobs_page_title')}</h1>
             <p className="text-xl text-muted-foreground">
-              Exclusive career opportunities from our trusted network of employers.
+              {t('jobs_page_subtitle')}
             </p>
           </motion.div>
 
@@ -220,25 +222,25 @@ function JobsContent() {
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Clock className="w-4 h-4" />
-                      <span>Posted {new Date(selectedJob.created_at).toLocaleDateString()}</span>
+                      <span>{t('job_posted')} {new Date(selectedJob.created_at).toLocaleDateString()}</span>
                     </div>
                   </div>
 
                   {selectedJob.salary_range && (
                     <div className="mb-8">
-                      <h3 className="font-display font-semibold text-lg mb-3">Salary Range</h3>
+                      <h3 className="font-display font-semibold text-lg mb-3">{t('job_salary_range')}</h3>
                       <p className="text-2xl font-semibold gradient-text">{selectedJob.salary_range}</p>
                     </div>
                   )}
 
                   <div className="mb-8">
-                    <h3 className="font-display font-semibold text-lg mb-3">Description</h3>
+                    <h3 className="font-display font-semibold text-lg mb-3">{t('job_description')}</h3>
                     <p className="text-muted-foreground leading-relaxed">{selectedJob.description}</p>
                   </div>
 
                   {selectedJob.requirements && (
                     <div className="mb-8">
-                      <h3 className="font-display font-semibold text-lg mb-3">Requirements</h3>
+                      <h3 className="font-display font-semibold text-lg mb-3">{t('job_requirements')}</h3>
                       <div
                         className="text-muted-foreground space-y-2 [&>ul]:ml-6 [&>ul>li]:list-disc"
                         dangerouslySetInnerHTML={{ __html: selectedJob.requirements }}
@@ -248,16 +250,16 @@ function JobsContent() {
 
                   <div className="flex gap-4">
                     <Button className="btn-gold flex-1" onClick={handleApplyClick}>
-                      Apply Now
+                      {t('btn_apply')}
                     </Button>
                     <Button variant="outline" onClick={() => toggleSave(selectedJob.id)}>
-                      {savedJobIds?.includes(selectedJob.id) ? 'Saved' : 'Save Job'}
+                      {savedJobIds?.includes(selectedJob.id) ? t('btn_saved') : t('btn_save')}
                     </Button>
                   </div>
 
                   {selectedJob.application_deadline && (
                     <p className="text-sm text-muted-foreground mt-4 text-center">
-                      Application deadline: {new Date(selectedJob.application_deadline).toLocaleDateString()}
+                      {t('job_deadline')}: {new Date(selectedJob.application_deadline).toLocaleDateString()}
                     </p>
                   )}
                 </div>

@@ -4,6 +4,7 @@ import { Search, Phone, Star, MapPin, Loader2, Building2 } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { Input } from '@/components/ui/input';
 import { useBusinesses } from '@/hooks/useBusinesses';
+import { useTranslation } from 'react-i18next';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -19,6 +20,7 @@ const itemVariants = {
 };
 
 export default function Directory() {
+  const { t } = useTranslation();
   const { data: businesses, isLoading } = useBusinesses();
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -52,9 +54,9 @@ export default function Directory() {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-3xl mb-12"
           >
-            <h1 className="heading-display mb-4">Business Directory</h1>
+            <h1 className="heading-display mb-4">{t('directory_page_title')}</h1>
             <p className="text-xl text-muted-foreground">
-              Discover trusted businesses and professionals from our community.
+              {t('directory_page_subtitle')}
             </p>
           </motion.div>
 
@@ -69,7 +71,7 @@ export default function Directory() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Search businesses..."
+                placeholder={t('search_placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-12 bg-secondary border-border h-12"
@@ -82,8 +84,8 @@ export default function Directory() {
                   key={category}
                   onClick={() => setActiveCategory(category)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeCategory === category
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                     }`}
                 >
                   {category}
@@ -166,7 +168,7 @@ export default function Directory() {
                         href={`tel:${business.phone.replace(/\D/g, '')}`}
                         className="flex-1 text-center py-2 rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/80 text-sm font-medium transition-colors"
                       >
-                        Call
+                        {t('btn_call')}
                       </a>
                       <a
                         href={`https://wa.me/${business.phone.replace(/\D/g, '')}`}
@@ -174,7 +176,7 @@ export default function Directory() {
                         rel="noopener noreferrer"
                         className="flex-1 text-center py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-medium transition-colors"
                       >
-                        WhatsApp
+                        {t('btn_whatsapp')}
                       </a>
                     </div>
                   )}
@@ -186,7 +188,7 @@ export default function Directory() {
           {filteredBusinesses.length === 0 && (
             <div className="text-center py-20">
               <Building2 className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-              <p className="text-muted-foreground">No businesses found matching your criteria.</p>
+              <p className="text-muted-foreground">{t('no_businesses')}</p>
             </div>
           )}
         </div>

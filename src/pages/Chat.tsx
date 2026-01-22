@@ -6,6 +6,7 @@ import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 import {
   useChatChannels,
   useChatMessages,
@@ -26,6 +27,7 @@ import { toast } from 'sonner';
 type TabType = 'channels' | 'dms';
 
 function ChatContent() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('channels');
 
@@ -167,7 +169,7 @@ function ChatContent() {
                   }`}
               >
                 <Hash className="w-4 h-4 inline mr-2" />
-                Channels
+                {t('tab_channels')}
               </button>
               <button
                 onClick={() => setActiveTab('dms')}
@@ -177,7 +179,7 @@ function ChatContent() {
                   }`}
               >
                 <User className="w-4 h-4 inline mr-2" />
-                DMs
+                {t('tab_dms')}
               </button>
             </div>
           </div>
@@ -280,7 +282,7 @@ function ChatContent() {
               </div>
             ) : messages?.length === 0 ? (
               <div className="text-center text-muted-foreground p-8">
-                No messages yet. Be the first to say hello!
+                {t('no_messages')}
               </div>
             ) : (
               messages?.map((msg: any, index: number) => {
@@ -399,8 +401,8 @@ function ChatContent() {
                 type="text"
                 placeholder={
                   activeTab === 'channels'
-                    ? `Message #${currentChannel?.name || '...'}`
-                    : `Message ${currentDMThread?.other_user_name || '...'}`
+                    ? t('msg_placeholder_channel', { channel: currentChannel?.name || '...' })
+                    : t('msg_placeholder_dm', { user: currentDMThread?.other_user_name || '...' })
                 }
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
@@ -436,7 +438,7 @@ function ChatContent() {
               : 'bg-card text-muted-foreground border border-border'
               }`}
           >
-            Channels
+            {t('tab_channels')}
           </button>
           <button
             onClick={() => setActiveTab('dms')}
@@ -445,7 +447,7 @@ function ChatContent() {
               : 'bg-card text-muted-foreground border border-border'
               }`}
           >
-            DMs
+            {t('tab_dms')}
           </button>
         </div>
       </div>

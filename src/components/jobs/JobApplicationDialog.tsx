@@ -13,6 +13,7 @@ import {
     DialogFooter,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from 'react-i18next';
 
 interface JobApplicationDialogProps {
     isOpen: boolean;
@@ -36,6 +37,7 @@ export function JobApplicationDialog({
     jobTitle,
     onSubmit
 }: JobApplicationDialogProps) {
+    const { t } = useTranslation();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -47,7 +49,7 @@ export function JobApplicationDialog({
             if (file.type === 'application/pdf' || file.type === 'application/msword' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
                 setSelectedFile(file);
             } else {
-                alert('Please upload a PDF or Word document');
+                alert(t('err_upload_file'));
                 e.target.value = ''; // Reset input
             }
         }
@@ -71,32 +73,32 @@ export function JobApplicationDialog({
         <Dialog open={isOpen} onOpenChange={(open) => !isSubmitting && !open && onClose()}>
             <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle>Apply for {jobTitle}</DialogTitle>
+                    <DialogTitle>{t('job_form_title')} {jobTitle}</DialogTitle>
                     <DialogDescription>
-                        Please fill out the form below to submit your application.
+                        {t('job_form_desc')}
                     </DialogDescription>
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6 mt-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="name">Full Name *</Label>
+                            <Label htmlFor="name">{t('name_label')} *</Label>
                             <Input
                                 id="name"
-                                {...register('name', { required: 'Name is required' })}
+                                {...register('name', { required: t('err_name_required') })}
                                 placeholder="John Doe"
                             />
                             {errors.name && <span className="text-red-500 text-xs">{errors.name.message}</span>}
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email *</Label>
+                            <Label htmlFor="email">{t('email_label')} *</Label>
                             <Input
                                 id="email"
                                 type="email"
                                 {...register('email', {
-                                    required: 'Email is required',
-                                    pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' }
+                                    required: t('err_email_required'),
+                                    pattern: { value: /^\S+@\S+$/i, message: t('err_email_invalid') }
                                 })}
                                 placeholder="john@example.com"
                             />
@@ -104,10 +106,10 @@ export function JobApplicationDialog({
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="phone">Phone Number *</Label>
+                            <Label htmlFor="phone">{t('phone_label')} *</Label>
                             <Input
                                 id="phone"
-                                {...register('phone', { required: 'Phone number is required' })}
+                                {...register('phone', { required: t('err_phone_required') })}
                                 placeholder="+1 (555) 000-0000"
                             />
                             {errors.phone && <span className="text-red-500 text-xs">{errors.phone.message}</span>}
@@ -117,7 +119,7 @@ export function JobApplicationDialog({
                             <Label htmlFor="address">Address *</Label>
                             <Input
                                 id="address"
-                                {...register('address', { required: 'Address is required' })}
+                                {...register('address', { required: t('err_address_required') })}
                                 placeholder="City, Country"
                             />
                             {errors.address && <span className="text-red-500 text-xs">{errors.address.message}</span>}
@@ -125,7 +127,7 @@ export function JobApplicationDialog({
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="resume">Resume / CV (PDF or Word) *</Label>
+                        <Label htmlFor="resume">{t('job_form_resume')}</Label>
                         <div className="border-2 border-dashed border-border p-6 rounded-lg text-center hover:bg-secondary/50 transition-colors cursor-pointer relative">
                             <input
                                 type="file"
@@ -145,8 +147,8 @@ export function JobApplicationDialog({
                                 ) : (
                                     <>
                                         <Upload className="w-8 h-8 text-muted-foreground" />
-                                        <span className="text-sm font-medium text-muted-foreground">Click to upload or drag and drop</span>
-                                        <span className="text-xs text-muted-foreground leading-tight">PDF, DOC up to 5MB</span>
+                                        <span className="text-sm font-medium text-muted-foreground">{t('job_form_upload_text')}</span>
+                                        <span className="text-xs text-muted-foreground leading-tight">{t('job_form_upload_sub')}</span>
                                     </>
                                 )}
                             </div>
@@ -154,27 +156,27 @@ export function JobApplicationDialog({
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="coverLetter">Cover Letter (Optional)</Label>
+                        <Label htmlFor="coverLetter">{t('job_form_cover')}</Label>
                         <Textarea
                             id="coverLetter"
                             {...register('coverLetter')}
-                            placeholder="Tell us why you're a good fit..."
+                            placeholder={t('job_form_placeholder_cover')}
                             className="min-h-[120px]"
                         />
                     </div>
 
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
-                            Cancel
+                            {t('btn_cancel')}
                         </Button>
                         <Button type="submit" className="btn-gold" disabled={isSubmitting}>
                             {isSubmitting ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Submitting...
+                                    {t('btn_submitting')}
                                 </>
                             ) : (
-                                'Submit Application'
+                                t('btn_submit_app')
                             )}
                         </Button>
                     </DialogFooter>

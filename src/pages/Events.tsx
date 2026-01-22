@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Calendar, MapPin, Users, Loader2 } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { useEvents } from '@/hooks/useEvents';
+import { useTranslation } from 'react-i18next';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -19,6 +20,7 @@ const itemVariants = {
 };
 
 export default function Events() {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('upcoming');
   const { data: events, isLoading } = useEvents(filter);
 
@@ -41,9 +43,9 @@ export default function Events() {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-3xl mb-12"
           >
-            <h1 className="heading-display mb-4">Community Events</h1>
+            <h1 className="heading-display mb-4">{t('events_page_title')}</h1>
             <p className="text-xl text-muted-foreground">
-              Join us for memorable experiences, networking opportunities, and celebrations.
+              {t('events_page_subtitle')}
             </p>
           </motion.div>
 
@@ -63,7 +65,7 @@ export default function Events() {
                   : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                   }`}
               >
-                {status === 'all' ? 'All Events' : status}
+                {status === 'all' ? t('tab_all_events') : t(`tab_${status}`)}
               </button>
             ))}
           </motion.div>
@@ -103,8 +105,8 @@ export default function Events() {
                         <Calendar className="w-20 h-20 text-primary/30" />
                       </div>
                       <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-medium uppercase backdrop-blur-sm ${isUpcoming
-                          ? 'bg-primary/90 text-primary-foreground'
-                          : 'bg-muted/90 text-muted-foreground'
+                        ? 'bg-primary/90 text-primary-foreground'
+                        : 'bg-muted/90 text-muted-foreground'
                         }`}>
                         {isUpcoming ? 'Upcoming' : 'Past'}
                       </div>
@@ -146,7 +148,7 @@ export default function Events() {
 
           {(!events || events.length === 0) && (
             <div className="text-center py-20">
-              <p className="text-muted-foreground">No events found.</p>
+              <p className="text-muted-foreground">{t('no_events')}</p>
             </div>
           )}
         </div>

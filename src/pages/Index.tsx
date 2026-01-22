@@ -6,6 +6,7 @@ import { Layout } from '@/components/layout/Layout';
 import { SectionHeader } from '@/components/shared/SectionHeader';
 import { Button } from '@/components/ui/button';
 import { articles, events, jobs } from '@/data/mockData';
+import { useTranslation } from 'react-i18next';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -23,6 +24,7 @@ const itemVariants = {
 
 
 export default function Index() {
+  const { t } = useTranslation();
   return (
     <Layout>
 
@@ -40,26 +42,25 @@ export default function Index() {
               transition={{ duration: 0.8 }}
             >
               <span className="inline-block text-primary text-sm font-medium tracking-wider uppercase mb-6">
-                Welcome to our community
+                {t('hero_welcome')}
               </span>
               <h1 className="heading-display mb-6">
-                Where Tradition
-                <span className="block gradient-text">Meets Tomorrow</span>
+                {t('hero_title_1')}
+                <span className="block gradient-text">{t('hero_title_2')}</span>
               </h1>
               <p className="text-xl text-muted-foreground mb-8 max-w-lg leading-relaxed">
-                A premium platform connecting our community through shared experiences,
-                meaningful opportunities, and lasting relationships.
+                {t('hero_subtitle')}
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link to="/signup">
                   <Button size="lg" className="btn-gold text-lg px-8">
-                    Join Our Community
+                    {t('btn_join_community')}
                     <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
                 </Link>
                 <Link to="/news">
                   <Button variant="outline" size="lg" className="text-lg px-8">
-                    Latest News
+                    {t('btn_latest_news')}
                   </Button>
                 </Link>
               </div>
@@ -72,13 +73,13 @@ export default function Index() {
               className="relative hidden lg:block"
             >
               <div className="card-elevated p-8">
-                <span className="text-primary text-sm font-medium uppercase tracking-wider">Featured</span>
+                <span className="text-primary text-sm font-medium uppercase tracking-wider">{t('featured_label')}</span>
                 <h3 className="text-2xl font-display font-semibold mt-3 mb-4">
                   {articles[0].title}
                 </h3>
                 <p className="text-muted-foreground mb-6">{articles[0].excerpt}</p>
                 <Link to={`/news/${articles[0].id}`} className="inline-flex items-center text-primary font-medium hover:underline">
-                  Read More <ArrowRight className="ml-2 w-4 h-4" />
+                  {t('read_more')} <ArrowRight className="ml-2 w-4 h-4" />
                 </Link>
               </div>
               <div className="absolute -bottom-4 -right-4 w-full h-full bg-primary/10 rounded-xl -z-10" />
@@ -98,10 +99,10 @@ export default function Index() {
             className="grid grid-cols-2 md:grid-cols-4 gap-8"
           >
             {[
-              { value: '10K+', label: 'Community Members' },
-              { value: '500+', label: 'Businesses Listed' },
-              { value: '1200+', label: 'Jobs Posted' },
-              { value: '50+', label: 'Events This Year' },
+              { value: '10K+', label: t('stats_members') },
+              { value: '500+', label: t('stats_businesses') },
+              { value: '1200+', label: t('stats_jobs') },
+              { value: '50+', label: t('stats_events') },
             ].map((stat, index) => (
               <motion.div key={index} variants={itemVariants} className="text-center">
                 <div className="text-4xl md:text-5xl font-display font-bold gradient-text">{stat.value}</div>
@@ -116,9 +117,9 @@ export default function Index() {
       <section className="py-20">
         <div className="section-container">
           <SectionHeader
-            title="Latest News"
-            subtitle="Stay updated with what's happening in our community"
-            link={{ text: 'View All News', href: '/news' }}
+            title={t('news_section')}
+            subtitle={t('news_subtitle')}
+            link={{ text: t('view_all_news'), href: '/news' }}
           />
           <motion.div
             variants={containerVariants}
@@ -160,9 +161,9 @@ export default function Index() {
       <section className="py-20 bg-card/30">
         <div className="section-container">
           <SectionHeader
-            title="Upcoming Events"
-            subtitle="Join us for memorable experiences and networking opportunities"
-            link={{ text: 'View All Events', href: '/events' }}
+            title={t('events_section')}
+            subtitle={t('events_subtitle')}
+            link={{ text: t('view_all_events'), href: '/events' }}
           />
           <motion.div
             variants={containerVariants}
@@ -203,9 +204,9 @@ export default function Index() {
       <section className="py-20">
         <div className="section-container">
           <SectionHeader
-            title="Featured Opportunities"
-            subtitle="Exclusive job listings from our network"
-            link={{ text: 'View All Jobs', href: '/jobs' }}
+            title={t('jobs_title')}
+            subtitle={t('jobs_subtitle')}
+            link={{ text: t('view_all_jobs'), href: '/jobs' }}
           />
           <motion.div
             variants={containerVariants}
@@ -250,23 +251,22 @@ export default function Index() {
             className="text-center max-w-3xl mx-auto"
           >
             <h2 className="heading-section mb-6">
-              Join a Thriving Community of <span className="gradient-text">10,000+ Members</span>
+              {t('cta_title_1')} <span className="gradient-text">{t('cta_title_2')}</span>
             </h2>
             <p className="text-xl text-muted-foreground mb-10">
-              Connect with professionals, entrepreneurs, and families who share your values.
-              Discover opportunities, build relationships, and grow together.
+              {t('cta_subtitle')}
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link to="/signup">
                 <Button size="lg" className="btn-gold text-lg px-10">
                   <Users className="mr-2 w-5 h-5" />
-                  Become a Member
+                  {t('cta_btn_member')}
                 </Button>
               </Link>
               <Link to="/chat">
                 <Button variant="outline" size="lg" className="text-lg px-10">
                   <MessageSquare className="mr-2 w-5 h-5" />
-                  Join the Conversation
+                  {t('cta_btn_conversation')}
                 </Button>
               </Link>
             </div>

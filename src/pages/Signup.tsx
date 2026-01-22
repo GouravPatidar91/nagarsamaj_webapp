@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
@@ -21,6 +22,7 @@ const signupSchema = z.object({
 });
 
 export default function Signup() {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -56,9 +58,9 @@ export default function Signup() {
     }
 
     setIsSubmitting(true);
-    
+
     const result = await signup(email, password, name);
-    
+
     if (result.success) {
       toast({
         title: 'Welcome to the community!',
@@ -72,7 +74,7 @@ export default function Signup() {
         variant: 'destructive',
       });
     }
-    
+
     setIsSubmitting(false);
   };
 
@@ -99,13 +101,13 @@ export default function Signup() {
               <div className="w-16 h-16 rounded-xl bg-primary mx-auto flex items-center justify-center mb-4">
                 <span className="font-display text-3xl text-primary-foreground font-bold">C</span>
               </div>
-              <h1 className="text-3xl font-display font-bold">Join Our Community</h1>
-              <p className="text-muted-foreground mt-2">Create your account to get started</p>
+              <h1 className="text-3xl font-display font-bold">{t('signup_title')}</h1>
+              <p className="text-muted-foreground mt-2">{t('signup_subtitle')}</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name">{t('name_label')}</Label>
                 <Input
                   id="name"
                   type="text"
@@ -121,7 +123,7 @@ export default function Signup() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('email_label')}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -137,7 +139,7 @@ export default function Signup() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t('password_label')}</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -182,20 +184,17 @@ export default function Signup() {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Creating account...
+                    {t('loading_text')}
                   </>
                 ) : (
-                  'Create Account'
+                  t('signup_button')
                 )}
               </Button>
             </form>
 
             <div className="mt-8 text-center">
               <p className="text-muted-foreground">
-                Already have an account?{' '}
-                <Link to="/login" className="text-primary hover:underline font-medium">
-                  Sign in
-                </Link>
+                {t('login_link_text')}
               </p>
             </div>
           </div>

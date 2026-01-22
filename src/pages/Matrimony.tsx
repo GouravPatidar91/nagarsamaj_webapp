@@ -28,6 +28,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useTranslation } from 'react-i18next';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -43,6 +44,7 @@ const itemVariants = {
 };
 
 function MatrimonyContent() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { toast } = useToast();
   const { data: profiles = [], isLoading } = useMatrimonyProfiles();
@@ -238,9 +240,9 @@ function MatrimonyContent() {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-3xl mb-12"
           >
-            <h1 className="heading-display mb-4">Matrimony</h1>
+            <h1 className="heading-display mb-4">{t('matrimony_page_title')}</h1>
             <p className="text-xl text-muted-foreground">
-              Find your life partner within our trusted community. All profiles are verified and handled with utmost privacy and respect.
+              {t('matrimony_page_subtitle')}
             </p>
           </motion.div>
 
@@ -266,12 +268,12 @@ function MatrimonyContent() {
                         )}
                       </div>
                       <div>
-                        <h3 className="font-semibold text-lg">Your Matrimony Profile</h3>
+                        <h3 className="font-semibold text-lg">{t('your_profile')}</h3>
                         <div className="flex items-center gap-2 mt-1">
                           {getStatusBadge(myProfile.status || 'pending')}
                           {myProfile.status === 'pending' && (
                             <span className="text-sm text-muted-foreground flex items-center gap-1">
-                              <Clock className="w-3 h-3" /> Under review
+                              <Clock className="w-3 h-3" /> {t('status_under_review')}
                             </span>
                           )}
                         </div>
@@ -279,7 +281,7 @@ function MatrimonyContent() {
                     </div>
                     <Button onClick={handleOpenCreateForm} variant="outline">
                       <Edit className="w-4 h-4 mr-2" />
-                      Edit Profile
+                      {t('btn_edit_profile')}
                     </Button>
                   </div>
                 </div>
@@ -287,14 +289,14 @@ function MatrimonyContent() {
                 <div className="bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 rounded-xl p-6">
                   <div className="flex items-center justify-between flex-wrap gap-4">
                     <div>
-                      <h3 className="font-semibold text-lg">Create Your Matrimony Profile</h3>
+                      <h3 className="font-semibold text-lg">{t('create_profile_card_title')}</h3>
                       <p className="text-muted-foreground text-sm mt-1">
-                        Share your profile to connect with potential matches in our community.
+                        {t('create_profile_card_desc')}
                       </p>
                     </div>
                     <Button onClick={handleOpenCreateForm} className="btn-gold">
                       <Plus className="w-4 h-4 mr-2" />
-                      Create Profile
+                      {t('btn_create_profile')}
                     </Button>
                   </div>
                 </div>
@@ -310,7 +312,7 @@ function MatrimonyContent() {
             className="bg-card/50 border border-border/50 rounded-xl p-6 mb-10"
           >
             <p className="text-muted-foreground text-sm">
-              <strong className="text-foreground">Privacy First:</strong> All information shared here is kept confidential. Contact details are only shared after mutual interest is expressed.
+              <strong className="text-foreground">{t('privacy_notice').split(':')[0]}:</strong> {t('privacy_notice').split(':')[1]}
             </p>
           </motion.div>
 
@@ -385,7 +387,7 @@ function MatrimonyContent() {
 
                   <div className="flex gap-3">
                     <Button variant="outline" className="flex-1" onClick={() => setSelectedProfile(profile)}>
-                      View Profile
+                      {t('btn_view_profile')}
                     </Button>
                     <Button
                       variant={interestedProfileIds.includes(profile.id) ? 'secondary' : 'default'}
@@ -396,12 +398,12 @@ function MatrimonyContent() {
                       {interestedProfileIds.includes(profile.id) ? (
                         <>
                           <Heart className="w-4 h-4 mr-1 fill-primary text-primary" />
-                          Sent
+                          {t('btn_interest_sent')}
                         </>
                       ) : (
                         <>
                           <Heart className="w-4 h-4 mr-1" />
-                          Interest
+                          {t('btn_interest')}
                         </>
                       )}
                     </Button>

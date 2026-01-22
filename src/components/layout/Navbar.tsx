@@ -1,19 +1,31 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, LogOut, User } from 'lucide-react';
+import { Menu, X, LogOut, User, Languages, Check } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { NotificationBell } from '@/components/shared/NotificationBell';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useTranslation } from 'react-i18next';
 
 const navLinks = [
-  { name: 'Home', href: '/' },
-  { name: 'News', href: '/news' },
-  { name: 'Events', href: '/events' },
-  { name: 'Jobs', href: '/jobs' },
-  { name: 'Matrimony', href: '/matrimony' },
-  { name: 'Directory', href: '/directory' },
-  { name: 'Chat', href: '/chat' },
+  { key: 'nav_home', href: '/' },
+  { key: 'nav_news', href: '/news' },
+  { key: 'nav_events', href: '/events' },
+  { key: 'nav_jobs', href: '/jobs' },
+  { key: 'nav_matrimony', href: '/matrimony' },
+  { key: 'nav_directory', href: '/directory' },
+  { key: 'nav_chat', href: '/chat' },
 ];
 
 export function Navbar() {
@@ -21,6 +33,7 @@ export function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth();
+  const { t, i18n } = useTranslation();
 
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/';
@@ -48,14 +61,14 @@ export function Navbar() {
           <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link
-                key={link.name}
+                key={link.key}
                 to={link.href}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isActive(link.href)
                   ? 'text-primary bg-primary/10'
                   : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
                   }`}
               >
-                {link.name}
+                {t(link.key)}
               </Link>
             ))}
           </div>
@@ -66,32 +79,69 @@ export function Navbar() {
                 {user?.isAdmin && (
                   <Link to="/admin">
                     <Button variant="outline" size="sm">
-                      Admin
+                      {t('nav_admin')}
                     </Button>
                   </Link>
                 )}
                 <NotificationBell />
-                <div className="flex items-center gap-2 text-sm">
-                  <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
-                    <User className="w-4 h-4" />
-                  </div>
-                  <span className="text-muted-foreground">{user?.name}</span>
-                </div>
-                <Button variant="ghost" size="sm" onClick={handleLogout}>
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Logout
-                </Button>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <div className="flex items-center gap-2 text-sm cursor-pointer hover:opacity-80 transition-opacity">
+                      <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
+                        <User className="w-4 h-4" />
+                      </div>
+                      <span className="text-muted-foreground">{user?.name}</span>
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>{user?.name}</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger>
+                        <Languages className="w-4 h-4 mr-2" />
+                        <span>{t('profile_language')}</span>
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuSubContent>
+                        <DropdownMenuItem onClick={() => {
+                          i18n.changeLanguage('en');
+                          localStorage.setItem('app-language', 'en');
+                        }}>
+                          <span>English</span>
+                          {i18n.language === 'en' && <Check className="w-4 h-4 ml-auto" />}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {
+                          i18n.changeLanguage('hi');
+                          localStorage.setItem('app-language', 'hi');
+                        }}>
+                          <span>हिंदी (Hindi)</span>
+                          {i18n.language === 'hi' && <Check className="w-4 h-4 ml-auto" />}
+                        </DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuSub>
+
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="text-destructive focus:text-destructive"
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      <span>{t('profile_logout')}</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             ) : (
               <div className="flex items-center gap-3">
                 <Link to="/login">
                   <Button variant="ghost" size="sm">
-                    Login
+                    {t('login_button')}
                   </Button>
                 </Link>
                 <Link to="/signup">
                   <Button variant="default" size="sm" className="btn-gold">
-                    Join Community
+                    {t('nav_join_community')}
                   </Button>
                 </Link>
               </div>
@@ -119,7 +169,7 @@ export function Navbar() {
               <div className="py-4 space-y-1">
                 {navLinks.map((link) => (
                   <Link
-                    key={link.name}
+                    key={link.key}
                     to={link.href}
                     onClick={() => setIsOpen(false)}
                     className={`block px-4 py-3 rounded-lg text-base font-medium transition-all ${isActive(link.href)
@@ -127,7 +177,7 @@ export function Navbar() {
                       : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
                       }`}
                   >
-                    {link.name}
+                    {t(link.key)}
                   </Link>
                 ))}
                 <div className="pt-4 border-t border-border/50 mt-4">
