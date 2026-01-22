@@ -107,6 +107,7 @@ export function Navbar() {
                         <DropdownMenuItem onClick={() => {
                           i18n.changeLanguage('en');
                           localStorage.setItem('app-language', 'en');
+                          localStorage.setItem('language-preference-set', "true");
                         }}>
                           <span>English</span>
                           {i18n.language === 'en' && <Check className="w-4 h-4 ml-auto" />}
@@ -114,6 +115,7 @@ export function Navbar() {
                         <DropdownMenuItem onClick={() => {
                           i18n.changeLanguage('hi');
                           localStorage.setItem('app-language', 'hi');
+                          localStorage.setItem('language-preference-set', "true");
                         }}>
                           <span>हिंदी (Hindi)</span>
                           {i18n.language === 'hi' && <Check className="w-4 h-4 ml-auto" />}
@@ -181,6 +183,37 @@ export function Navbar() {
                   </Link>
                 ))}
                 <div className="pt-4 border-t border-border/50 mt-4">
+                  {/* Mobile Language Switcher */}
+                  <div className="flex items-center justify-between px-4 mb-4">
+                    <span className="text-sm font-medium text-muted-foreground">{t('profile_language')}</span>
+                    <div className="flex gap-2">
+                      <Button
+                        variant={i18n.language === 'en' ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => {
+                          i18n.changeLanguage('en');
+                          localStorage.setItem('app-language', 'en');
+                          localStorage.setItem('language-preference-set', "true");
+                        }}
+                        className="text-xs h-8"
+                      >
+                        EN
+                      </Button>
+                      <Button
+                        variant={i18n.language === 'hi' ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => {
+                          i18n.changeLanguage('hi');
+                          localStorage.setItem('app-language', 'hi');
+                          localStorage.setItem('language-preference-set', "true");
+                        }}
+                        className="text-xs h-8"
+                      >
+                        हिंदी
+                      </Button>
+                    </div>
+                  </div>
+
                   {isAuthenticated ? (
                     <div className="space-y-4">
                       <div className="flex items-center gap-3 px-4">
