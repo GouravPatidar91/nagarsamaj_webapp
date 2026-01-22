@@ -10,11 +10,16 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
+import { useAuth } from "@/contexts/AuthContext";
+
 const LanguageWelcomeDialog = () => {
     const { t, i18n } = useTranslation();
+    const { isAuthenticated, isLoading } = useAuth();
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
+        if (isLoading || !isAuthenticated) return;
+
         // Check if language has been set in localStorage
         const savedLanguage = localStorage.getItem("app-language");
 
@@ -22,7 +27,7 @@ const LanguageWelcomeDialog = () => {
         if (!savedLanguage) {
             setOpen(true);
         }
-    }, []);
+    }, [isAuthenticated, isLoading]);
 
     const handleLanguageSelect = (language: string) => {
         i18n.changeLanguage(language);

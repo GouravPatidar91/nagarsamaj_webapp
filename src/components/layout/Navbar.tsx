@@ -182,25 +182,37 @@ export function Navbar() {
                 ))}
                 <div className="pt-4 border-t border-border/50 mt-4">
                   {isAuthenticated ? (
-                    <div className="space-y-2">
-                      {user?.isAdmin && (
-                        <Link
-                          to="/admin"
-                          onClick={() => setIsOpen(false)}
-                          className="block px-4 py-3 rounded-lg text-base font-medium text-muted-foreground hover:text-foreground hover:bg-secondary"
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3 px-4">
+                        <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+                          <User className="w-5 h-5" />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-medium">{user?.name}</span>
+                          <span className="text-xs text-muted-foreground">{user?.email}</span>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        {user?.isAdmin && (
+                          <Link
+                            to="/admin"
+                            onClick={() => setIsOpen(false)}
+                            className="block px-4 py-3 rounded-lg text-base font-medium text-muted-foreground hover:text-foreground hover:bg-secondary"
+                          >
+                            Admin Dashboard
+                          </Link>
+                        )}
+                        <button
+                          onClick={() => {
+                            handleLogout();
+                            setIsOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-3 rounded-lg text-base font-medium text-destructive hover:bg-destructive/10"
                         >
-                          Admin Dashboard
-                        </Link>
-                      )}
-                      <button
-                        onClick={() => {
-                          handleLogout();
-                          setIsOpen(false);
-                        }}
-                        className="w-full text-left px-4 py-3 rounded-lg text-base font-medium text-destructive hover:bg-destructive/10"
-                      >
-                        Logout
-                      </button>
+                          Logout
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     <div className="space-y-2 px-4">

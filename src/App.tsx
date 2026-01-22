@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/shared/ProtectedRoute";
 import "./i18n";
 import LanguageWelcomeDialog from "@/components/LanguageWelcomeDialog";
 import Index from "./pages/Index";
@@ -34,14 +35,14 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/news" element={<News />} />
-            <Route path="/news/:id" element={<NewsDetail />} />
+            <Route path="/news" element={<ProtectedRoute><News /></ProtectedRoute>} />
+            <Route path="/news/:id" element={<ProtectedRoute><NewsDetail /></ProtectedRoute>} />
             <Route path="/events" element={<Events />} />
             <Route path="/events/:id" element={<EventDetail />} />
-            <Route path="/jobs" element={<Jobs />} />
-            <Route path="/matrimony" element={<Matrimony />} />
-            <Route path="/directory" element={<Directory />} />
-            <Route path="/chat" element={<Chat />} />
+            <Route path="/jobs" element={<ProtectedRoute><Jobs /></ProtectedRoute>} />
+            <Route path="/matrimony" element={<ProtectedRoute><Matrimony /></ProtectedRoute>} />
+            <Route path="/directory" element={<ProtectedRoute><Directory /></ProtectedRoute>} />
+            <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
             <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
