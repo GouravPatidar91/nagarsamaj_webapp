@@ -9,6 +9,7 @@ import "./i18n";
 import LanguageWelcomeDialog from "@/components/LanguageWelcomeDialog";
 import { Suspense, lazy } from "react";
 import { Loader2 } from "lucide-react";
+import { Analytics } from "@vercel/analytics/react";
 
 // Lazy load pages for performance
 const Index = lazy(() => import("./pages/Index"));
@@ -59,6 +60,7 @@ const App = () => (
             </Routes>
           </Suspense>
         </BrowserRouter>
+        <Analytics />
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>
