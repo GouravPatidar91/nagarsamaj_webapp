@@ -1,29 +1,18 @@
-<div align="center">
+# Community Connect Hub
 
-  <h1 style="font-size: 3rem; font-weight: bold; background: -webkit-linear-gradient(45deg, #FFD700, #DAA520); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Community Connect Hub</h1>
+### ✨ Connect. Grow. Thrive. ✨
 
-  <h3>✨ Connect. Grow. Thrive. ✨</h3>
+A next-generation community platform built for seamless interaction, professional networking, and resource sharing.
+Experience a modern, immersive interface designed to bring people together.
 
-  <p>
-    A next-generation community platform built for seamless interaction, professional networking, and resource sharing.
-    Experience a modern, immersive interface designed to bring people together.
-  </p>
+[Features](#features) • [Tech Stack](#tech-stack) • [Getting Started](#getting-started) • [Contributing](#contributing)
 
-  <p align="center">
-    <a href="#features">Features</a> •
-    <a href="#tech-stack">Tech Stack</a> •
-    <a href="#getting-started">Getting Started</a> •
-    <a href="#contributing">Contributing</a>
-  </p>
-
-  ![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)
-  ![React](https://img.shields.io/badge/react-18.3.1-61DAFB.svg?style=flat-square&logo=react&logoColor=black)
-  ![TypeScript](https://img.shields.io/badge/typescript-5.8.3-3178C6.svg?style=flat-square&logo=typescript&logoColor=white)
-  ![Vite](https://img.shields.io/badge/vite-4.5.3-646CFF.svg?style=flat-square&logo=vite&logoColor=white)
-  ![TailwindCSS](https://img.shields.io/badge/tailwindcss-3.4.17-38B2AC.svg?style=flat-square&logo=tailwind-css&logoColor=white)
-  ![Supabase](https://img.shields.io/badge/supabase-backend-3ECF8E.svg?style=flat-square&logo=supabase&logoColor=white)
-
-</div>
+![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)
+![React](https://img.shields.io/badge/react-18.3.1-61DAFB.svg?style=flat-square&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/typescript-5.8.3-3178C6.svg?style=flat-square&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/vite-4.5.3-646CFF.svg?style=flat-square&logo=vite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-3.4.17-38B2AC.svg?style=flat-square&logo=tailwind-css&logoColor=white)
+![Supabase](https://img.shields.io/badge/supabase-backend-3ECF8E.svg?style=flat-square&logo=supabase&logoColor=white)
 
 ---
 
@@ -138,7 +127,7 @@ Contributions are what make the open-source community such an amazing place to l
 
 <div align="center">
 
-  <h3>Built with ❤️ by the Community Connect Team</h3>
+  <h3>Built with ❤️ by the Community Connect Team (DNP Studio)</h3>
 
   <p>
     Questions? Reach out to us or open an issue!
