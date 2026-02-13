@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -41,6 +42,7 @@ interface UserWithRole {
 
 export function AdminUsersTab() {
   const { toast } = useToast();
+  const { user: currentUser } = useAuth();
   const queryClient = useQueryClient();
   const [editingUser, setEditingUser] = useState<UserWithRole | null>(null);
   const [newRole, setNewRole] = useState<string>('user');
@@ -194,12 +196,14 @@ export function AdminUsersTab() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="bg-card border-border">
-                      <DropdownMenuItem onClick={() => {
-                        setEditingUser(user);
-                        setNewRole(user.role);
-                      }}>
-                        <Edit className="w-4 h-4 mr-2" /> Change Role
-                      </DropdownMenuItem>
+                      {currentUser?.role === 'super_admin' && (
+                        <DropdownMenuItem onClick={() => {
+                          setEditingUser(user);
+                          setNewRole(user.role);
+                        }}>
+                          <Edit className="w-4 h-4 mr-2" /> Change Role
+                        </DropdownMenuItem>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </td>

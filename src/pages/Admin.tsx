@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
+import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -35,9 +36,27 @@ const tabs = [
 
 function AdminContent() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState('users');
+  const { user } = useAuth();
 
-  // Fetch counts for stats
+  // Define tab access based on roles
+  const roleAccess = {
+    super_admin: ['users', 'articles', 'events', 'jobs', 'matrimony', 'directory', 'chat', 'reports', 'activity'],
+    content_admin: ['articles', 'events', 'jobs', 'matrimony', 'directory'],
+    moderation_admin: ['users', 'chat', 'reports', 'activity'],
+    user: []
+  };
+
+  // Filter tabs based on user role
+  const userTabs = tabs.filter(tab =>
+    user?.role && roleAccess[user.role as keyof typeof roleAccess]?.includes(tab.id)
+  );
+
+  const [activeTab, setActiveTab] = useState(userTabs[0]?.id || '');
+
+  // Update active tab if it's not in the allowed list (e.g. on role change or initial load)
+  if (userTabs.length > 0 && !userTabs.find(t => t.id === activeTab)) {
+    setActiveTab(userTabs[0].id);
+  }
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['admin-stats'],
     queryFn: async () => {
@@ -160,7 +179,7 @@ function AdminContent() {
             transition={{ delay: 0.1 }}
             className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8"
           >
-            {tabs.map((tab) => (
+            {userTabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
@@ -185,7 +204,7 @@ function AdminContent() {
             transition={{ delay: 0.2 }}
             className="flex flex-wrap gap-2 mb-6"
           >
-            {tabs.map((tab) => (
+            {userTabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}

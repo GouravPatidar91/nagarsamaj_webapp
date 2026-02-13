@@ -1,6 +1,7 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Hash, Loader2, MessageSquare, VolumeX, User } from 'lucide-react';
+import { Send, Hash, Loader2, MessageSquare, VolumeX, User, Paperclip, X, FileText, Image as ImageIcon, Video as VideoIcon, Trash2, MoreHorizontal } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,8 @@ import {
   useDirectMessageThreads,
   useDirectMessages,
   useSendDirectMessage,
+  useDeleteMessage,
+  useDeleteDirectMessage,
 } from '@/hooks/useChat';
 import type { ChatMessageWithProfile, DirectMessage } from '@/hooks/useChat';
 import {
@@ -23,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 type TabType = 'channels' | 'dms';
 
@@ -42,9 +46,14 @@ function ChatContent() {
   const [activeDMUser, setActiveDMUser] = useState<string | null>(null);
   const { data: dmMessages, isLoading: dmMessagesLoading } = useDirectMessages(user?.id, activeDMUser || undefined);
   const { mutate: sendDM, isPending: isSendingDM } = useSendDirectMessage();
+  const deleteMessageMutation = useDeleteMessage();
+  const deleteDirectMessageMutation = useDeleteDirectMessage();
 
   const [newMessage, setNewMessage] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Set first channel as active when channels are loaded
   useEffect(() => {
@@ -61,30 +70,98 @@ function ChatContent() {
     scrollToBottom();
   }, [channelMessages, dmMessages]);
 
-  const handleSendChannel = (e: React.FormEvent) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) { // 10MB limit
+        toast.error('File size must be less than 10MB');
+        return;
+      }
+      setSelectedFile(file);
+    }
+  };
+
+  const clearFile = () => {
+    setSelectedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const uploadFile = async (file: File) => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
+      const filePath = `${user?.id}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('chat-attachments')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('chat-attachments')
+        .getPublicUrl(filePath);
+
+      let type = 'document';
+      if (file.type.startsWith('image/')) type = 'image';
+      else if (file.type.startsWith('video/')) type = 'video';
+
+      return { url: data.publicUrl, type };
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Failed to upload file');
+      return null;
+    }
+  };
+
+  const handleSendChannel = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !user || !activeChannel) return;
+    if ((!newMessage.trim() && !selectedFile) || !user || !activeChannel) return;
+
+    let attachmentData = null;
+    if (selectedFile) {
+      setIsUploading(true);
+      attachmentData = await uploadFile(selectedFile);
+      setIsUploading(false);
+      if (!attachmentData) return;
+    }
 
     sendChannelMessage({
       channel_id: activeChannel,
-      content: newMessage.trim(),
-      user_id: user.id
+      content: newMessage.trim() || (selectedFile ? 'Sent an attachment' : ''),
+      user_id: user.id,
+      attachment_url: attachmentData?.url,
+      attachment_type: attachmentData?.type,
     });
 
     setNewMessage('');
+    clearFile();
   };
 
-  const handleSendDM = (e: React.FormEvent) => {
+  const handleSendDM = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !activeDMUser || !user) return;
+    if ((!newMessage.trim() && !selectedFile) || !activeDMUser || !user) return;
+
+    let attachmentData = null;
+    if (selectedFile) {
+      setIsUploading(true);
+      attachmentData = await uploadFile(selectedFile);
+      setIsUploading(false);
+      if (!attachmentData) return;
+    }
 
     sendDM({
       fromUserId: user.id,
       toUserId: activeDMUser,
-      content: newMessage.trim(),
+      content: newMessage.trim() || (selectedFile ? 'Sent an attachment' : ''),
+      attachment_url: attachmentData?.url,
+      attachment_type: attachmentData?.type,
     });
 
     setNewMessage('');
+    clearFile();
   };
 
   const handleStartDM = (targetUser: any) => {
@@ -98,6 +175,21 @@ function ChatContent() {
 
   const handleMute = (userName: string) => {
     toast.success(`Muted ${userName}`);
+  };
+
+  const handleDeleteMessage = async (messageId: string, isDirectMessage: boolean) => {
+    if (!confirm(t('Are you sure you want to delete this message?'))) return;
+
+    try {
+      if (isDirectMessage) {
+        await deleteDirectMessageMutation.mutateAsync(messageId);
+      } else {
+        await deleteMessageMutation.mutateAsync(messageId);
+      }
+      toast.success('Message deleted');
+    } catch (error) {
+      toast.error('Failed to delete message');
+    }
   };
 
   const formatTime = (timestamp: string) => {
@@ -290,7 +382,9 @@ function ChatContent() {
                   ? msg.user_id === user?.id
                   : msg.from_user_id === user?.id;
                 const prevMsg = messages[index - 1] as any;
-                const showAvatar = index === 0 || (
+
+                // Determine if we should show avatar/header (new sender or significant time gap)
+                const isNewGroup = index === 0 || (
                   activeTab === 'channels'
                     ? prevMsg?.user_id !== msg.user_id
                     : prevMsg?.from_user_id !== msg.from_user_id
@@ -305,87 +399,133 @@ function ChatContent() {
                     animate={{ opacity: 1, y: 0 }}
                     className={`flex gap-4 ${isOwnMessage ? 'justify-end' : ''}`}
                   >
-                    {!isOwnMessage && showAvatar && activeTab === 'channels' && (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger className="outline-none">
-                          <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden cursor-pointer hover:opacity-80 transition-opacity">
-                            {getAvatarUrl(msg) ? (
-                              <img src={getAvatarUrl(msg)} alt={displayName} className="w-full h-full object-cover" />
+                    {/* Avatar Side (Left) - Only for other users */}
+                    {!isOwnMessage && (
+                      <>
+                        {isNewGroup ? (
+                          <div className="flex-shrink-0">
+                            {activeTab === 'channels' ? (
+                              <DropdownMenu>
+                                <DropdownMenuTrigger className="outline-none">
+                                  <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center overflow-hidden cursor-pointer hover:opacity-80 transition-opacity">
+                                    {getAvatarUrl(msg) ? (
+                                      <img src={getAvatarUrl(msg)} alt={displayName} className="w-full h-full object-cover" />
+                                    ) : (
+                                      <span className="text-sm font-medium">
+                                        {displayName.charAt(0)}
+                                      </span>
+                                    )}
+                                  </div>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start">
+                                  <DropdownMenuItem onClick={() => handleStartDM(msg.profile)}>
+                                    <MessageSquare className="w-4 h-4 mr-2" />
+                                    Chat personally
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleMute(displayName)}>
+                                    <VolumeX className="w-4 h-4 mr-2" />
+                                    Mute {displayName}
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
                             ) : (
-                              <span className="text-sm font-medium">
-                                {displayName.charAt(0)}
-                              </span>
+                              <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
+                                {getAvatarUrl(msg) ? (
+                                  <img src={getAvatarUrl(msg)} alt={displayName} className="w-full h-full object-cover" />
+                                ) : (
+                                  <span className="text-sm font-medium">
+                                    {displayName.charAt(0)}
+                                  </span>
+                                )}
+                              </div>
                             )}
                           </div>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start">
-                          <DropdownMenuItem onClick={() => handleStartDM(msg.profile)}>
-                            <MessageSquare className="w-4 h-4 mr-2" />
-                            Chat personally
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleMute(displayName)}>
-                            <VolumeX className="w-4 h-4 mr-2" />
-                            Mute {displayName}
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    )}
-                    {!isOwnMessage && showAvatar && activeTab === 'dms' && (
-                      <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
-                        {getAvatarUrl(msg) ? (
-                          <img src={getAvatarUrl(msg)} alt={displayName} className="w-full h-full object-cover" />
                         ) : (
-                          <span className="text-sm font-medium">
-                            {displayName.charAt(0)}
-                          </span>
+                          <div className="w-10 flex-shrink-0" />
                         )}
-                      </div>
+                      </>
                     )}
-                    {!isOwnMessage && !showAvatar && (
-                      <div className="w-10 flex-shrink-0" />
-                    )}
-                    <div className={`max-w-[70%] ${isOwnMessage ? 'text-right' : ''}`}>
-                      {showAvatar && activeTab === 'channels' && (
-                        <div className={`flex items-center gap-2 mb-1 ${isOwnMessage ? 'justify-end' : ''}`}>
-                          {!isOwnMessage ? (
+
+                    {/* Message Content Side */}
+                    <div className={`group max-w-[70%] ${isOwnMessage ? 'text-right' : ''}`}>
+
+                      {/* Metadata Header (Name/Time/Actions) */}
+                      <div className={`flex items-center gap-2 mb-1 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
+                        {/* Case: Other User in Channel - Show Name & Actions */}
+                        {!isOwnMessage && activeTab === 'channels' && isNewGroup && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">{displayName}</span>
+                            <span className="text-xs text-muted-foreground">{formatTime(msg.created_at)}</span>
+                          </div>
+                        )}
+
+                        {/* Case: Other User in DM - Show Time if new group */}
+                        {!isOwnMessage && activeTab === 'dms' && isNewGroup && (
+                          <span className="text-xs text-muted-foreground">{formatTime(msg.created_at)}</span>
+                        )}
+
+                        {/* Case: Own Message - Show Time & Delete Option */}
+                        {isOwnMessage && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground">{formatTime(msg.created_at)}</span>
                             <DropdownMenu>
-                              <DropdownMenuTrigger className="outline-none hover:underline cursor-pointer">
-                                <span className="text-sm font-medium">
-                                  {displayName}
-                                </span>
+                              <DropdownMenuTrigger className="outline-none cursor-pointer text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity p-1">
+                                <MoreHorizontal className="w-4 h-4" />
                               </DropdownMenuTrigger>
-                              <DropdownMenuContent align="start">
-                                <DropdownMenuItem onClick={() => handleStartDM(msg.profile)}>
-                                  <MessageSquare className="w-4 h-4 mr-2" />
-                                  Chat personally
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleMute(displayName)}>
-                                  <VolumeX className="w-4 h-4 mr-2" />
-                                  Mute {displayName}
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  onClick={() => handleDeleteMessage(msg.id, activeTab === 'dms')}
+                                  className="text-destructive focus:text-destructive"
+                                >
+                                  <Trash2 className="w-4 h-4 mr-2" />
+                                  Delete
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
-                          ) : (
-                            <span className="text-sm font-medium">
-                              {displayName}
-                            </span>
-                          )}
-                          <span className="text-xs text-muted-foreground">
-                            {formatTime(msg.created_at)}
-                          </span>
-                        </div>
-                      )}
-                      <div className={`inline-block rounded-xl px-4 py-2.5 ${isOwnMessage
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Message Bubble */}
+                      <div className={`relative inline-block rounded-xl px-4 py-2.5 text-left ${isOwnMessage
                         ? 'bg-primary text-primary-foreground rounded-br-sm'
                         : 'bg-secondary rounded-bl-sm'
                         }`}>
-                        <p className="text-sm leading-relaxed">{msg.content}</p>
+                        <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+
+                        {/* Attachments */}
+                        {msg.attachment_url && (
+                          <div className="mt-2">
+                            {msg.attachment_type === 'image' ? (
+                              <img
+                                src={msg.attachment_url}
+                                alt="Attachment"
+                                className="max-w-full rounded-lg max-h-60 object-cover"
+                              />
+                            ) : msg.attachment_type === 'video' ? (
+                              <video
+                                src={msg.attachment_url}
+                                controls
+                                className="max-w-full rounded-lg max-h-60"
+                              />
+                            ) : (
+                              <a
+                                href={msg.attachment_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 p-2 bg-background/20 rounded-lg hover:bg-background/30 transition-colors"
+                              >
+                                <FileText className="w-4 h-4" />
+                                <span className="text-xs underline">View Document</span>
+                              </a>
+                            )}
+                          </div>
+                        )}
                       </div>
-                      {activeTab === 'dms' && (
-                        <div className="text-xs text-muted-foreground mt-1">
-                          {formatTime(msg.created_at)}
-                        </div>
-                      )}
+
+                      {/* Timestamp footer for non-avatar/consecutive messages if simple view needed? */}
+                      {/* Currently handled in header for simplicity and better look */}
+
                     </div>
                   </motion.div>
                 );
@@ -396,7 +536,41 @@ function ChatContent() {
 
           {/* Message Input */}
           <div className="p-4 border-t border-border/50">
+            {selectedFile && (
+              <div className="mb-2 p-2 bg-secondary rounded-lg flex items-center justify-between">
+                <div className="flex items-center gap-2 text-sm text-foreground/80">
+                  {selectedFile.type.startsWith('image/') ? (
+                    <ImageIcon className="w-4 h-4 text-primary" />
+                  ) : selectedFile.type.startsWith('video/') ? (
+                    <VideoIcon className="w-4 h-4 text-primary" />
+                  ) : (
+                    <FileText className="w-4 h-4 text-primary" />
+                  )}
+                  <span className="truncate max-w-[200px]">{selectedFile.name}</span>
+                  <span className="text-xs text-muted-foreground">({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)</span>
+                </div>
+                <button onClick={clearFile} className="text-muted-foreground hover:text-destructive">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
             <form onSubmit={activeTab === 'channels' ? handleSendChannel : handleSendDM} className="flex gap-3">
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileSelect}
+                className="hidden"
+                accept="image/*,video/*,.pdf,.doc,.docx"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="h-12 w-12 flex-shrink-0"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Paperclip className="w-5 h-5 text-muted-foreground" />
+              </Button>
               <Input
                 type="text"
                 placeholder={
@@ -417,13 +591,13 @@ function ChatContent() {
                 type="submit"
                 className="btn-gold h-12 px-6"
                 disabled={
-                  !newMessage.trim() ||
+                  (!newMessage.trim() && !selectedFile) ||
                   (activeTab === 'channels' && !activeChannel) ||
                   (activeTab === 'dms' && !activeDMUser) ||
-                  isSending
+                  isSending || isUploading
                 }
               >
-                {isSending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                {isSending || isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               </Button>
             </form>
           </div>

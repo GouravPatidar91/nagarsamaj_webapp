@@ -2,11 +2,14 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
+export type AppRole = 'super_admin' | 'content_admin' | 'moderation_admin' | 'user';
+
 export interface AppUser {
   id: string;
   email: string;
   name: string;
   isAdmin: boolean;
+  role: AppRole;
   avatar?: string;
 }
 
@@ -37,14 +40,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq('user_id', userId)
         .single();
 
-      // Check if user is admin
-      const { data: isAdmin } = await supabase.rpc('is_admin', { _user_id: userId });
+      // Get user role
+      const { data: userRole } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .single();
+
+      const role = (userRole?.role as AppRole) || 'user';
+      const isAdmin = ['super_admin', 'content_admin', 'moderation_admin'].includes(role);
 
       setUser({
         id: userId,
         email: email,
         name: profile?.full_name || email.split('@')[0],
-        isAdmin: isAdmin || false,
+        isAdmin: isAdmin,
+        role: role,
         avatar: profile?.avatar_url || undefined,
       });
     } catch (error) {
@@ -54,6 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email: email,
         name: email.split('@')[0],
         isAdmin: false,
+        role: 'user',
       });
     }
   };

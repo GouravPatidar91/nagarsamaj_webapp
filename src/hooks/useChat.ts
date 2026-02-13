@@ -9,8 +9,14 @@ export type ChatChannel = Tables<'chat_channels'> & {
     avatar_url: string | null;
   } | null;
 };
-export type ChatMessage = Tables<'chat_messages'>;
-export type ChatMessageInsert = TablesInsert<'chat_messages'>;
+export type ChatMessage = Tables<'chat_messages'> & {
+  attachment_url?: string | null;
+  attachment_type?: string | null;
+};
+export type ChatMessageInsert = TablesInsert<'chat_messages'> & {
+  attachment_url?: string | null;
+  attachment_type?: string | null;
+};
 
 export type ChatMessageWithProfile = ChatMessage & {
   profile: {
@@ -35,6 +41,8 @@ export type DirectMessage = {
     full_name: string | null;
     avatar_url: string | null;
   } | null;
+  attachment_url?: string | null;
+  attachment_type?: string | null;
 };
 
 export type DirectMessageThread = {
@@ -212,7 +220,11 @@ export function useSendMessage() {
     mutationFn: async (message: ChatMessageInsert) => {
       const { data, error } = await supabase
         .from('chat_messages')
-        .insert(message)
+        .insert({
+          ...message,
+          attachment_url: message.attachment_url,
+          attachment_type: message.attachment_type
+        })
         .select()
         .single();
 
@@ -221,6 +233,25 @@ export function useSendMessage() {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['chat-messages', data.channel_id] });
+    },
+  });
+}
+
+export function useDeleteMessage() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (messageId: string) => {
+      const { error } = await supabase
+        .from('chat_messages')
+        .delete()
+        .eq('id', messageId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      // We invalidate generic chat-messages to trigger a refetch for the active channel
+      queryClient.invalidateQueries({ queryKey: ['chat-messages'] });
     },
   });
 }
@@ -399,19 +430,40 @@ export function useSendDirectMessage() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ fromUserId, toUserId, content }: { fromUserId: string; toUserId: string; content: string }) => {
+    mutationFn: async ({ fromUserId, toUserId, content, attachment_url, attachment_type }: { fromUserId: string; toUserId: string; content: string; attachment_url?: string; attachment_type?: string }) => {
       const { data, error } = await supabase
         .from('direct_messages')
         .insert({
           from_user_id: fromUserId,
           to_user_id: toUserId,
           content,
+          attachment_url,
+          attachment_type,
         })
         .select()
         .single();
 
       if (error) throw error;
       return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['direct-messages'] });
+      queryClient.invalidateQueries({ queryKey: ['dm-threads'] });
+    },
+  });
+}
+
+export function useDeleteDirectMessage() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (messageId: string) => {
+      const { error } = await supabase
+        .from('direct_messages')
+        .delete()
+        .eq('id', messageId);
+
+      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['direct-messages'] });
