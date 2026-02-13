@@ -1,4 +1,3 @@
-
 <div align="center">
 
   <h1 style="font-size: 3rem; font-weight: bold; background: -webkit-linear-gradient(45deg, #FFD700, #DAA520); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Community Connect Hub</h1>
