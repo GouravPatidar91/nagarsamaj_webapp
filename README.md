@@ -38,16 +38,12 @@ Experience a modern, immersive interface designed to bring people together.
 
 ## 🛠️ Tech Stack
 
-<div align="center">
-
 | Frontend | Backend | Tools & Utilities |
 | :---: | :---: | :---: |
 | ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) | ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white) | ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white) |
 | ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white) | ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white) | ![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white) |
 | ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white) | | ![ESLint](https://img.shields.io/badge/ESLint-4B3263?style=for-the-badge&logo=eslint&logoColor=white) |
 | ![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white) | | ![npm](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white) |
-
-</div>
 
 ---
 
@@ -125,12 +121,6 @@ Contributions are what make the open-source community such an amazing place to l
 
 ---
 
-<div align="center">
+### Built with ❤️ by the Community Connect Team (DNP Studio)
 
-  <h3>Built with ❤️ by the Community Connect Team (DNP Studio)</h3>
-
-  <p>
-    Questions? Reach out to us or open an issue!
-  </p>
-
-</div>
+Questions? Reach out to us or open an issue!
