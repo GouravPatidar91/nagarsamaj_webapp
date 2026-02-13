@@ -147,7 +147,7 @@ export default function Index() {
                 Welcome to Nagar Brahman Samaj
               </span>
               <h1 className="heading-display mb-6 text-white">
-                Connect with <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-500">Nagar Samaj</span>
+                Connect with <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-500 pb-2">Nagar Samaj</span>
               </h1>
               <p className="text-xl text-gray-200 mb-8 max-w-lg leading-relaxed">
                 The official digital platform for the Nagar Brahman Community. Connect with professionals, find opportunities, and celebrate our heritage together.
