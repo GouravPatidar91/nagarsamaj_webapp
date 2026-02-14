@@ -144,13 +144,13 @@ export default function Index() {
               transition={{ duration: 0.8 }}
             >
               <span className="inline-block text-amber-400 text-sm font-medium tracking-wider uppercase mb-6">
-                Welcome to Nagar Brahman Samaj
+                {t('hero_welcome')}
               </span>
               <h1 className="heading-display mb-6 text-white">
-                Connect with <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-500 pb-2">Nagar Samaj</span>
+                {t('hero_connect_with')} <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-500 pb-2">{t('app_title')}</span>
               </h1>
               <p className="text-xl text-gray-200 mb-8 max-w-lg leading-relaxed">
-                The official digital platform for the Nagar Brahman Community. Connect with professionals, find opportunities, and celebrate our heritage together.
+                {t('hero_description')}
               </p>
               <div className="flex flex-wrap gap-4">
                 {!isAuthenticated && (
@@ -193,7 +193,7 @@ export default function Index() {
                   </div>
                 ) : (
                   <div className="backdrop-blur-md bg-white/10 border border-white/20 p-8 rounded-2xl shadow-xl flex items-center justify-center min-h-[300px]">
-                    <p className="text-gray-300">No featured articles available</p>
+                    <p className="text-gray-300">{t('hero_no_featured')}</p>
                   </div>
                 )
               }
@@ -270,7 +270,7 @@ export default function Index() {
                 </motion.div>
               ))
             ) : (
-              <div className="col-span-full text-center py-10 text-muted-foreground">No news articles found.</div>
+              <div className="col-span-full text-center py-10 text-muted-foreground">{t('home_no_news')}</div>
             )}
           </motion.div>
         </div>
@@ -319,7 +319,7 @@ export default function Index() {
                 </motion.div>
               ))
             ) : (
-              <div className="col-span-full text-center py-10 text-muted-foreground">No upcoming events found.</div>
+              <div className="col-span-full text-center py-10 text-muted-foreground">{t('home_no_events')}</div>
             )}
           </motion.div>
         </div>
@@ -363,19 +363,19 @@ export default function Index() {
                           <span>{job.location}</span>
                         </div>
                         <div className="mt-4 pt-4 border-t border-border/50">
-                          <span className="text-primary font-medium">{job.salary_range || 'Salary not specified'}</span>
+                          <span className="text-primary font-medium">{job.salary_range || t('job_salary_unspecified')}</span>
                         </div>
                       </>
                     ) : (
                       <div className="mt-4 pt-4 border-t border-border/50 text-center">
-                        <p className="text-sm text-muted-foreground italic">Login to view details</p>
+                        <p className="text-sm text-muted-foreground italic">{t('job_login_view')}</p>
                       </div>
                     )}
                   </Link>
                 </motion.div>
               ))
             ) : (
-              <div className="col-span-full text-center py-10 text-muted-foreground">No recent jobs found.</div>
+              <div className="col-span-full text-center py-10 text-muted-foreground">{t('home_no_jobs')}</div>
             )}
           </motion.div>
         </div>
@@ -392,7 +392,7 @@ export default function Index() {
           >
             {isAuthenticated ? (
               <h2 className="heading-section mb-6">
-                Thank You for Being a Member! <span className="gradient-text">Of Our Community</span>
+                {t('home_member_title_1')} <span className="gradient-text">{t('home_member_title_2')}</span>
               </h2>
             ) : (
               <h2 className="heading-section mb-6">
@@ -401,7 +401,7 @@ export default function Index() {
             )}
 
             <p className="text-xl text-muted-foreground mb-10">
-              {isAuthenticated ? "We appreciate your contribution to our thriving community. Together we grow stronger." : t('cta_subtitle')}
+              {isAuthenticated ? t('home_member_subtitle') : t('cta_subtitle')}
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               {!isAuthenticated && (

@@ -52,9 +52,11 @@ export function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-              <span className="font-display text-xl text-primary-foreground font-bold">न</span>
+              <span className="font-display text-xl text-primary-foreground font-bold">
+                {t('app_title').charAt(0)}
+              </span>
             </div>
-            <span className="font-display text-xl font-semibold hidden sm:block">Nagar Samaj</span>
+            <span className="font-display text-xl font-semibold hidden sm:block">{t('app_title')}</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -136,6 +138,32 @@ export function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-3">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="hover:bg-secondary">
+                      <Languages className="w-5 h-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => {
+                      i18n.changeLanguage('en');
+                      localStorage.setItem('app-language', 'en');
+                      localStorage.setItem('language-preference-set', "true");
+                    }}>
+                      <span>English</span>
+                      {i18n.language === 'en' && <Check className="w-4 h-4 ml-auto" />}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => {
+                      i18n.changeLanguage('hi');
+                      localStorage.setItem('app-language', 'hi');
+                      localStorage.setItem('language-preference-set', "true");
+                    }}>
+                      <span>हिंदी (Hindi)</span>
+                      {i18n.language === 'hi' && <Check className="w-4 h-4 ml-auto" />}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
                 <Link to="/login">
                   <Button variant="ghost" size="sm">
                     {t('login_button')}
@@ -233,7 +261,7 @@ export function Navbar() {
                             onClick={() => setIsOpen(false)}
                             className="block px-4 py-3 rounded-lg text-base font-medium text-muted-foreground hover:text-foreground hover:bg-secondary"
                           >
-                            Admin Dashboard
+                            {t('admin_dashboard')}
                           </Link>
                         )}
                         <button
@@ -243,20 +271,20 @@ export function Navbar() {
                           }}
                           className="w-full text-left px-4 py-3 rounded-lg text-base font-medium text-destructive hover:bg-destructive/10"
                         >
-                          Logout
+                          {t('profile_logout')}
                         </button>
                       </div>
                     </div>
                   ) : (
-                    <div className="space-y-2 px-4">
+                    <div className="space-y-2">
                       <Link to="/login" onClick={() => setIsOpen(false)}>
                         <Button variant="outline" className="w-full">
-                          Login
+                          {t('login_button')}
                         </Button>
                       </Link>
                       <Link to="/signup" onClick={() => setIsOpen(false)}>
                         <Button className="w-full btn-gold">
-                          Join Community
+                          {t('nav_join_community')}
                         </Button>
                       </Link>
                     </div>
