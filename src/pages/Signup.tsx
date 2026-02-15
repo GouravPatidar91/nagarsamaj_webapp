@@ -212,7 +212,9 @@ export default function Signup() {
 
             <div className="mt-8 text-center">
               <p className="text-muted-foreground">
-                {t('login_link_text')}
+                <Link to="/login" className="hover:text-primary transition-colors hover:underline">
+                  {t('login_link_text')}
+                </Link>
               </p>
             </div>
           </div>
