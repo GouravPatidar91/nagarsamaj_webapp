@@ -49,10 +49,10 @@ const LanguageWelcomeDialog = () => {
                                 transition={{ delay: 0.2 }}
                             >
                                 <h2 className="text-3xl md:text-4xl font-display font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-600 to-rose-600">
-                                    Welcome to Nagar Samaj
+                                    Welcome to Nagar Brahmin Samaj
                                 </h2>
                                 <h3 className="text-xl md:text-2xl font-serif text-muted-foreground mt-2">
-                                    नगर समाज में आपका स्वागत है
+                                    नगर ब्राह्मण समाज में आपका स्वागत है
                                 </h3>
                             </motion.div>
 
