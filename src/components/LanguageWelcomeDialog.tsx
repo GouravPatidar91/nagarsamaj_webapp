@@ -52,7 +52,7 @@ const LanguageWelcomeDialog = () => {
                                     Welcome to Nagar Brahmin Samaj
                                 </h2>
                                 <h3 className="text-xl md:text-2xl font-serif text-muted-foreground mt-2">
-                                    नगर ब्राह्मण समाज में आपका स्वागत है
+                                    नागर ब्राह्मण समाज में आपका स्वागत है
                                 </h3>
                             </motion.div>
 
