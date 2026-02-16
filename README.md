@@ -1,107 +1,84 @@
-<div align="center">
+# nagarsamaj_webapp
 
-# 🌍 Nagar Brahmin Samaj - Community Connect Hub
+## Overview
+This web application serves as a platform for the Nagar Samaj community, providing various services and features to enhance connectivity and support among community members.
 
-**The official digital platform connecting Nagar Brahmin Samaj members worldwide**
+## Features
+- **User Registration and Login**: Secure registration and login for community members.
+- **Event Management**: Create, update, and manage community events.
+- **Forum**: A platform for discussions and sharing ideas.
+- **Profile Management**: Users can manage their personal information and preferences.
 
-[![Status](https://img.shields.io/badge/Status-Active-brightgreen)]()
-[![License](https://img.shields.io/badge/License-MIT-blue)]()
-[![Node.js](https://img.shields.io/badge/Node.js-18+-green)]()
-[![React](https://img.shields.io/badge/React-19-61dafb)]()
-[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-336791)]()
+## Architecture
+The application follows a Model-View-Controller (MVC) architecture, with a clear separation of concerns:
+- **Frontend**: Built using React.js, providing a dynamic and responsive user interface.
+- **Backend**: Node.js with Express.js handling server-side logic and API endpoints.
+- **Database**: MongoDB for storing user data, events, and forum posts.
 
-</div>
+## Setup
+### Prerequisites
+- Node.js
+- MongoDB
 
----
+### Installation
+1. Clone the repository:  
+   `git clone https://github.com/GouravPatidar91/nagarsamaj_webapp.git`
+2. Navigate to the project directory:  
+   `cd nagarsamaj_webapp`
+3. Install dependencies:  
+   `npm install`
+4. Start the server:  
+   `npm start`
 
-## 📖 Table of Contents
+## Database Schema
+The database consists of the following collections:
+- **Users**: Stores user profiles and credentials.
+- **Events**: Contains details about community events.
+- **Posts**: Stores forum posts and comments.
 
-- [Overview](#overview)
-- [Key Features](#-key-features)
-- [Architecture](#-architecture)
-- [Technology Stack](#-technology-stack)
-- [Getting Started](#-getting-started)
-- [Project Structure](#-project-structure)
-- [Database Schema](#-database-schema)
-- [Security & RLS](#-security--row-level-security)
-- [API & RPC Functions](#-api--rpc-functions)
-- [Contributing](#-contributing)
-- [Roadmap](#-roadmap)
-- [Community](#-community)
+## Security
+- HTTPS is enforced for secure communication.
+- Passwords are hashed before storing in the database.
+- JWT tokens are used for user authentication.
 
----
+## API Functions
+### User API
+- `POST /api/users/register`: Register a new user.
+- `POST /api/users/login`: Login an existing user.
 
-## 🎯 Overview
+### Events API
+- `GET /api/events`: Retrieve a list of events.
+- `POST /api/events`: Create a new event.
 
-Nagar Brahmin Samaj is a **comprehensive community platform** designed to strengthen connections among Nagar Brahmin community members worldwide. It serves as a centralized hub for:
+## Testing
+- Tests are written using Jest and can be run with:  
+   `npm test`
 
-- 👥 **Community Networking** - Connect with members, build relationships
-- 💼 **Career Opportunities** - Job postings and employment connections
-- 📰 **News & Updates** - Stay informed with community news and announcements
-- 🎉 **Event Management** - Discover and organize community events
-- 💍 **Matrimony Services** - Matrimony profiles and connections
-- 🏪 **Business Directory** - Showcase and discover community businesses
-- 💬 **Direct Communication** - Chat channels and direct messaging
-- 🎯 **Content Management** - Articles, blogs, and community resources
+## Deployment
+1. Build the application:  
+   `npm run build`
+2. Deploy the build folder to your web server.
 
----
+## Contributing Guidelines
+Contributions are welcome! Please follow these steps:
+1. Fork the repository.
+2. Create a new branch:  
+   `git checkout -b feature-name`
+3. Make your changes and commit them.
+4. Push to the branch.
+5. Create a pull request.
 
-## ✨ Key Features
+## Roadmap
+- Implement push notifications for events.
+- Add user roles and permissions.
 
-### 👨‍👩‍👧‍👦 Community & Networking
-- **User Profiles** - Comprehensive personal profiles with privacy controls
-- **Privacy Levels** - Choose between public, limited, and private visibility
-- **User Blocking** - Safety features to block unwanted interactions
-- **Activity Logs** - Track user actions and community engagement
+## FAQ
+**Q: How can I reset my password?**  
+A: Use the "Forgot Password" link on the login page.
 
-### 💼 Job Portal
-- **Job Listings** - Post and browse community job opportunities
-- **Applications** - Apply with cover letters and resumes
-- **Saved Jobs** - Bookmark interesting opportunities
-- **Resume Storage** - Secure storage for application materials
-- **Admin Management** - Moderate and manage job postings
-
-### 🎉 Events Management
-- **Event Creation** - Organize community gatherings
-- **Event Registration** - Track attendees and RSVPs
-- **Event Status** - Pending, approved, or cancelled states
-- **Capacity Management** - Control maximum attendees
-
-### 💍 Matrimony Platform
-- **Profile Management** - Create detailed matrimony profiles
-- **Interest System** - Express and manage matrimony interests
-- **Photo Uploads** - Secure photo storage for profiles
-- **Privacy Settings** - Control profile visibility
-- **Message System** - Connect with potential matches
-
-### 📰 Content & News
-- **Article Management** - Create and publish community news
-- **Article Categories** - Organize content by topics
-- **Featured Articles** - Highlight important news
-- **Bookmarks** - Save articles for later reading
-- **Draft System** - Publish workflow with drafts and scheduled posts
-
-### 🏪 Business Directory
-- **Business Listings** - Showcase community businesses
-- **Contact Information** - Display business details safely
-- **Category Organization** - Browse by business type
-- **Approval Workflow** - Admin moderation system
-
-### 💬 Messaging & Chat
-- **Public Channels** - Community discussion channels
-- **Private Channels** - Create DMs and group chats
-- **Direct Messages** - One-on-one communication
-- **Message Threading** - Organize conversations
-- **Attachments** - Share images, videos, and documents
-- **Real-time Updates** - Live messaging with Supabase Realtime
-
-### 🔔 Notifications & Moderation
-- **Smart Notifications** - Real-time alerts and updates
-- **Reporting System** - Community safety features
-- **Moderation Tools** - Admin controls for content
-- **Audit Trails** - Complete activity logging
+## Community Support
+For support, please open an issue in the repository or join our community forum. We encourage feedback and suggestions.
 
 ---
 
-## 🏗️ Architecture
-
+_Last updated: 2026-02-16 10:08:50 UTC_
