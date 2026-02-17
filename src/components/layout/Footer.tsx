@@ -10,10 +10,8 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-                <span className="font-display text-xl text-primary-foreground font-bold">
-                  {t('app_title').charAt(0)}
-                </span>
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden">
+                <img src="/Logo.png" alt="Logo" className="w-full h-full object-contain" />
               </div>
               <span className="font-display text-xl font-semibold">{t('app_title')}</span>
             </div>

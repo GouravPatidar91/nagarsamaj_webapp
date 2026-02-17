@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useState, useEffect, useRef } from 'react';
+import { DonationSection } from '@/components/DonationSection';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -422,6 +423,9 @@ export default function Index() {
           </motion.div>
         </div>
       </section>
+
+      {/* Donation Section */}
+      <DonationSection />
     </Layout>
   );
 }

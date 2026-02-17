@@ -172,7 +172,7 @@
     "validation_passwords_match": "Passwords do not match",
     "hero_welcome": "Welcome to Nagar Brahmin Samaj",
     "hero_connect_with": "Connect with",
-    "hero_description": "The official digital platform for the Nagar Brahmin Community. Connect with professionals, find opportunities, and celebrate our heritage together.",
+    "hero_description": "The official digital platform for the MP Nagar Brahmin Community. Connect with professionals, find opportunities, and celebrate our heritage together.",
     "hero_no_featured": "No featured articles available",
     "home_member_title_1": "Thank You for Being a Member!",
     "home_member_title_2": "Of Our Community",
@@ -181,5 +181,8 @@
     "home_no_events": "No upcoming events found.",
     "home_no_jobs": "No recent jobs found.",
     "job_salary_unspecified": "Salary not specified",
-    "job_login_view": "Login to view details"
+    "job_login_view": "Login to view details",
+    "donation_title": "Support Our Community",
+    "donation_subtitle": "QR code of the official bank account of the community to provide financial support to the MP Nagar Brahmin Parishad",
+    "donation_cta": "Scan to Donate"
 }
