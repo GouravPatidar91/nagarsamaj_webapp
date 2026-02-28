@@ -24,10 +24,6 @@ export function SessionHandler() {
                 const shouldRedirect = location.pathname === '/login' || location.pathname === '/signup';
 
                 if (shouldRedirect) {
-                    toast({
-                        title: t('toast_login_success') || 'Welcome back!',
-                        description: t('toast_login_success_desc') || 'You have successfully logged in.',
-                    });
                     navigate(user?.isAdmin ? '/admin' : '/', { replace: true });
                 }
             }

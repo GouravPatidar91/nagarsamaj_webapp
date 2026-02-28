@@ -392,12 +392,14 @@ export default function Index() {
                   </Button>
                 </Link>
               )}
-              <a href="/Excel/MPNAGARSAMAJ.xlsx" target="_blank" rel="noopener noreferrer" className="inline-block">
-                <Button variant="outline" size="lg" className="text-lg px-10">
-                  <Users className="mr-2 w-5 h-5" />
-                  {t('cta_btn_see_members')}
-                </Button>
-              </a>
+              {isAuthenticated && user?.status === 'approved' && (
+                <a href="/Excel/MPNAGARSAMAJ.xlsx" target="_blank" rel="noopener noreferrer" className="inline-block">
+                  <Button variant="outline" size="lg" className="text-lg px-10">
+                    <Users className="mr-2 w-5 h-5" />
+                    {t('cta_btn_see_members')}
+                  </Button>
+                </a>
+              )}
             </div>
           </motion.div>
         </div>
