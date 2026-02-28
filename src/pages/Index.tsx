@@ -413,12 +413,12 @@ export default function Index() {
                   </Button>
                 </Link>
               )}
-              <Link to="/chat">
+              <a href="/Excel/MPNAGARSAMAJ.xlsx" target="_blank" rel="noopener noreferrer" className="inline-block">
                 <Button variant="outline" size="lg" className="text-lg px-10">
-                  <MessageSquare className="mr-2 w-5 h-5" />
-                  {t('cta_btn_conversation')}
+                  <Users className="mr-2 w-5 h-5" />
+                  {t('cta_btn_see_members')}
                 </Button>
-              </Link>
+              </a>
             </div>
           </motion.div>
         </div>

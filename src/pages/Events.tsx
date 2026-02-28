@@ -21,7 +21,7 @@ const itemVariants = {
 
 export default function Events() {
   const { t } = useTranslation();
-  const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('upcoming');
+  const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('all');
   const { data: events, isLoading } = useEvents(filter);
 
   if (isLoading) {

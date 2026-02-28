@@ -1,17 +1,27 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Calendar, Clock, MapPin, Users, Check } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, MapPin, Users, Check, Loader2 } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { events } from '@/data/mockData';
+import { useEvent } from '@/hooks/useEvents';
 import { useToast } from '@/hooks/use-toast';
 
 export default function EventDetail() {
   const { id } = useParams();
-  const event = events.find(e => e.id === id);
+  const { data: event, isLoading } = useEvent(id || '');
   const [isRegistered, setIsRegistered] = useState(false);
   const { toast } = useToast();
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
 
   if (!event) {
     return (
@@ -50,25 +60,26 @@ export default function EventDetail() {
             <div className="grid lg:grid-cols-3 gap-10">
               {/* Main Content */}
               <div className="lg:col-span-2">
-                <div className={`inline-block px-3 py-1 rounded-full text-xs font-medium uppercase mb-4 ${
-                  event.status === 'upcoming' 
-                    ? 'bg-primary text-primary-foreground' 
+                <div className={`inline-block px-3 py-1 rounded-full text-xs font-medium uppercase mb-4 ${new Date(event.event_date) >= new Date()
+                    ? 'bg-primary text-primary-foreground'
                     : 'bg-muted text-muted-foreground'
-                }`}>
-                  {event.status}
+                  }`}>
+                  {new Date(event.event_date) >= new Date() ? 'Upcoming' : 'Past'}
                 </div>
 
                 <h1 className="text-4xl md:text-5xl font-display font-bold mb-6">
                   {event.title}
                 </h1>
 
-                <div className="aspect-video rounded-xl overflow-hidden mb-8">
-                  <img
-                    src={event.image}
-                    alt={event.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                {event.image_url && (
+                  <div className="aspect-video rounded-xl overflow-hidden mb-8">
+                    <img
+                      src={event.image_url}
+                      alt={event.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
 
                 <div className="prose prose-invert prose-lg max-w-none">
                   <h2 className="text-2xl font-display font-semibold mb-4">About This Event</h2>
@@ -76,11 +87,11 @@ export default function EventDetail() {
                     {event.description}
                   </p>
                   <p className="text-foreground/90 leading-relaxed">
-                    Join us for an unforgettable experience that brings together community members from all walks of life. 
+                    Join us for an unforgettable experience that brings together community members from all walks of life.
                     This event promises to be a celebration of our shared values, traditions, and aspirations for the future.
                   </p>
                   <p className="text-foreground/90 leading-relaxed">
-                    Whether you're a long-time community member or new to our network, this is the perfect opportunity to 
+                    Whether you're a long-time community member or new to our network, this is the perfect opportunity to
                     connect, learn, and grow alongside fellow members who share your commitment to excellence.
                   </p>
                 </div>
@@ -90,7 +101,7 @@ export default function EventDetail() {
               <div className="lg:col-span-1">
                 <div className="card-elevated sticky top-28">
                   <h3 className="text-xl font-display font-semibold mb-6">Event Details</h3>
-                  
+
                   <div className="space-y-5">
                     <div className="flex items-start gap-4">
                       <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -99,7 +110,7 @@ export default function EventDetail() {
                       <div>
                         <p className="text-sm text-muted-foreground">Date</p>
                         <p className="font-medium">
-                          {new Date(event.date).toLocaleDateString('en-US', { dateStyle: 'full' })}
+                          {new Date(event.event_date).toLocaleDateString('en-US', { dateStyle: 'full' })}
                         </p>
                       </div>
                     </div>
@@ -109,20 +120,23 @@ export default function EventDetail() {
                         <Clock className="w-5 h-5 text-primary" />
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Time</p>
-                        <p className="font-medium">{event.time}</p>
+                        <p className="font-medium">
+                          {new Date(event.event_date).toLocaleTimeString('en-US', { timeStyle: 'short' })}
+                        </p>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <MapPin className="w-5 h-5 text-primary" />
+                    {event.location && (
+                      <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <MapPin className="w-5 h-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground">Location</p>
+                          <p className="font-medium">{event.location}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Location</p>
-                        <p className="font-medium">{event.location}</p>
-                      </div>
-                    </div>
+                    )}
 
                     <div className="flex items-start gap-4">
                       <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -130,13 +144,15 @@ export default function EventDetail() {
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Capacity</p>
-                        <p className="font-medium">{event.registrations} / {event.capacity} registered</p>
+                        <p className="font-medium">
+                          {event.max_attendees ? `Max ${event.max_attendees} attendees` : 'Unlimited capacity'}
+                        </p>
                       </div>
                     </div>
                   </div>
 
                   <div className="mt-8 pt-6 border-t border-border/50">
-                    {event.status === 'upcoming' ? (
+                    {new Date(event.event_date) >= new Date() ? (
                       isRegistered ? (
                         <Button className="w-full" variant="secondary" disabled>
                           <Check className="w-4 h-4 mr-2" />

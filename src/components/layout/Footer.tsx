@@ -28,6 +28,7 @@ export function Footer() {
               <li><Link to="/jobs" className="text-muted-foreground hover:text-primary transition-colors">{t('nav_jobs')}</Link></li>
               <li><Link to="/directory" className="text-muted-foreground hover:text-primary transition-colors">{t('nav_directory')}</Link></li>
               <li><Link to="/about" className="text-muted-foreground hover:text-primary transition-colors">{t('about_title')}</Link></li>
+              <li><a href="https://acrobat.adobe.com/id/urn:aaid:sc:AP:6d0ae172-7bcf-41a9-ab4b-9b5d8e11d18d" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">{t('footer_core_members')}</a></li>
             </ul>
           </div>
 

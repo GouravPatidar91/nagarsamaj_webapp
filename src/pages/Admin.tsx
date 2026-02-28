@@ -209,7 +209,7 @@ function AdminContent() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === tab.id
-                  ? 'bg-primary text-primary-foreground'
+                  ? 'bg-primary/80 text-primary-foreground shadow-md'
                   : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                   }`}
               >

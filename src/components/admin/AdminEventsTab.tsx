@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Plus, Trash2, Edit, MoreHorizontal, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,6 +28,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useAllEvents, useCreateEvent, useUpdateEvent, useDeleteEvent } from '@/hooks/useEvents';
 import { Skeleton } from '@/components/ui/skeleton';
+import { supabase } from '@/integrations/supabase/client';
 
 interface EventForm {
   title: string;
@@ -63,6 +64,47 @@ export function AdminEventsTab() {
   const [form, setForm] = useState<EventForm>(defaultForm);
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      if (!event.target.files || event.target.files.length === 0) {
+        return;
+      }
+      setIsUploading(true);
+      const file = event.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `events/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('public-images')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const { data } = supabase.storage
+        .from('public-images')
+        .getPublicUrl(filePath);
+
+      setForm((prev) => ({ ...prev, image_url: data.publicUrl }));
+      toast({ title: 'Image uploaded successfully' });
+    } catch (error: any) {
+      toast({
+        title: 'Error uploading image',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
 
   const handleSubmit = async () => {
     if (!form.title || !form.event_date) {
@@ -155,7 +197,7 @@ export function AdminEventsTab() {
 
   const filteredEvents = events?.filter(event => {
     const matchesStatus = statusFilter === 'all' || event.status === statusFilter;
-    const matchesSearch = !searchQuery || 
+    const matchesSearch = !searchQuery ||
       event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       event.location?.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesStatus && matchesSearch;
@@ -215,7 +257,11 @@ export function AdminEventsTab() {
               <tr key={event.id} className="border-b border-border/30 hover:bg-card/50">
                 <td className="py-4 px-4 font-medium max-w-xs truncate">{event.title}</td>
                 <td className="py-4 px-4 text-muted-foreground">
-                  {new Date(event.event_date).toLocaleDateString()}
+                  {new Date(event.event_date).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                  })}
                 </td>
                 <td className="py-4 px-4 text-muted-foreground max-w-xs truncate">
                   {event.location || 'TBD'}
@@ -322,13 +368,45 @@ export function AdminEventsTab() {
                 />
               </div>
               <div className="col-span-2">
-                <Label>Image URL</Label>
-                <Input
-                  value={form.image_url}
-                  onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-                  placeholder="https://..."
-                  className="mt-1"
-                />
+                <Label>Event Image</Label>
+                <div className="flex items-center gap-4 mt-1">
+                  {form.image_url && (
+                    <div className="w-20 h-20 rounded overflow-hidden flex-shrink-0 border border-border">
+                      <img src={form.image_url} alt="Preview" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <div className="flex-1 space-y-2">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      accept="image/*"
+                      onChange={handlePhotoUpload}
+                      className="hidden"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploading}
+                    >
+                      {isUploading ? 'Uploading...' : 'Upload Image'}
+                    </Button>
+                    {form.image_url && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="ml-2 text-destructive"
+                        onClick={() => setForm({ ...form, image_url: '' })}
+                      >
+                        Remove
+                      </Button>
+                    )}
+                    <p className="text-xs text-muted-foreground">
+                      JPG, PNG or GIF. Max 5MB.
+                    </p>
+                  </div>
+                </div>
               </div>
               <div className="col-span-2">
                 <Label>Description</Label>

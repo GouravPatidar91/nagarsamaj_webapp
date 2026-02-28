@@ -153,6 +153,19 @@ export function useCreateMatrimonyProfile() {
 
   return useMutation({
     mutationFn: async (profile: MatrimonyProfileInsert) => {
+      // 1. Check if user already has a profile
+      const { data: existingProfile, error: checkError } = await supabase
+        .from('matrimony_profiles')
+        .select('id')
+        .eq('user_id', profile.user_id)
+        .maybeSingle();
+
+      if (checkError) throw checkError;
+
+      if (existingProfile) {
+        throw new Error('You already have a matrimony profile.');
+      }
+
       const { data, error } = await supabase
         .from('matrimony_profiles')
         .insert(profile)

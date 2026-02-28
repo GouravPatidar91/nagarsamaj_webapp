@@ -193,6 +193,15 @@ function MatrimonyContent() {
         });
         toast({ title: 'Profile updated', description: 'Your matrimony profile has been updated.' });
       } else {
+        if (myProfile) {
+          toast({
+            title: 'Profile already exists',
+            description: 'You can only create one matrimony profile per account.',
+            variant: 'destructive',
+          });
+          return;
+        }
+
         await createProfileMutation.mutateAsync({
           user_id: user.id,
           full_name: formData.full_name,
