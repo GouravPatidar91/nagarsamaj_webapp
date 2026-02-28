@@ -1,7 +1,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Hash, Loader2, MessageSquare, VolumeX, User, Paperclip, X, FileText, Image as ImageIcon, Video as VideoIcon, Trash2, MoreHorizontal } from 'lucide-react';
+import { Send, Hash, Loader2, MessageSquare, VolumeX, User, Paperclip, X, FileText, Image as ImageIcon, Video as VideoIcon, Trash2, MoreHorizontal, ChevronLeft } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
 import { Button } from '@/components/ui/button';
@@ -34,6 +34,7 @@ function ChatContent() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('channels');
+  const [showMobileSidebar, setShowMobileSidebar] = useState(true);
 
   // Channel state
   const { data: channels, isLoading: channelsLoading } = useChatChannels(user?.id);
@@ -170,6 +171,7 @@ function ChatContent() {
     // Switch to DMs tab and open conversation with this user
     setActiveTab('dms');
     setActiveDMUser(targetUser.user_id);
+    setShowMobileSidebar(false);
     toast.success(`Started chat with ${targetUser.full_name}`);
   };
 
@@ -248,7 +250,7 @@ function ChatContent() {
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="w-64 bg-card border-r border-border/50 flex-shrink-0 hidden md:flex flex-col"
+          className={`w-full md:w-64 bg-card border-r border-border/50 flex-col flex-shrink-0 ${showMobileSidebar ? 'flex' : 'hidden md:flex'}`}
         >
           {/* Tabs */}
           <div className="p-4 border-b border-border/50">
@@ -283,7 +285,10 @@ function ChatContent() {
               channels?.map((channel) => (
                 <button
                   key={channel.id}
-                  onClick={() => setActiveChannel(channel.id)}
+                  onClick={() => {
+                    setActiveChannel(channel.id);
+                    setShowMobileSidebar(false);
+                  }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all ${activeChannel === channel.id
                     ? 'bg-primary/10 text-primary'
                     : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
@@ -301,7 +306,10 @@ function ChatContent() {
               dmThreads?.map((thread) => (
                 <button
                   key={thread.other_user_id}
-                  onClick={() => setActiveDMUser(thread.other_user_id)}
+                  onClick={() => {
+                    setActiveDMUser(thread.other_user_id);
+                    setShowMobileSidebar(false);
+                  }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all ${activeDMUser === thread.other_user_id
                     ? 'bg-primary/10 text-primary'
                     : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
@@ -334,10 +342,16 @@ function ChatContent() {
         </motion.div>
 
         {/* Main Chat Area */}
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className={`flex-1 flex-col min-w-0 ${showMobileSidebar ? 'hidden md:flex' : 'flex'}`}>
           {/* Header */}
-          <div className="h-16 px-6 border-b border-border/50 flex items-center">
-            <div className="flex items-center gap-3">
+          <div className="h-16 px-4 md:px-6 border-b border-border/50 flex items-center">
+            <div className="flex items-center gap-2 md:gap-3">
+              <button
+                className="md:hidden p-2 -ml-2 text-muted-foreground hover:bg-secondary rounded-full"
+                onClick={() => setShowMobileSidebar(true)}
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
               {activeTab === 'channels' ? (
                 <>
                   <Hash className="w-5 h-5 text-primary" />
@@ -603,27 +617,6 @@ function ChatContent() {
           </div>
         </div>
 
-        {/* Mobile Tab Selector */}
-        <div className="md:hidden fixed bottom-20 left-4 right-4 flex gap-2">
-          <button
-            onClick={() => setActiveTab('channels')}
-            className={`flex-1 px-4 py-3 rounded-lg font-medium ${activeTab === 'channels'
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-card text-muted-foreground border border-border'
-              }`}
-          >
-            {t('tab_channels')}
-          </button>
-          <button
-            onClick={() => setActiveTab('dms')}
-            className={`flex-1 px-4 py-3 rounded-lg font-medium ${activeTab === 'dms'
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-card text-muted-foreground border border-border'
-              }`}
-          >
-            {t('tab_dms')}
-          </button>
-        </div>
       </div>
     </Layout>
   );
