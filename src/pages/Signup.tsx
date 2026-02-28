@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
@@ -28,11 +28,33 @@ export default function Signup() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string; confirmPassword?: string }>({});
+
+  const calculateStrength = (pass: string) => {
+    let score = 0;
+    if (!pass) return { score: 0, label: '', color: 'bg-muted' };
+
+    if (pass.length >= 8) score += 1;
+    if (/[A-Z]/.test(pass)) score += 1;
+    if (/[a-z]/.test(pass)) score += 1;
+    if (/[0-9]/.test(pass)) score += 1;
+    if (/[^A-Za-z0-9]/.test(pass)) score += 1;
+
+    if (score <= 2) return { score, label: 'Weak', color: 'bg-destructive' };
+    if (score === 3) return { score, label: 'Fair', color: 'bg-yellow-500' };
+    if (score === 4) return { score, label: 'Good', color: 'bg-blue-500' };
+    return { score, label: 'Strong', color: 'bg-green-500' };
+  };
+
+  const strength = calculateStrength(password);
   const { signup, loginWithGoogle, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+
+  const from = location.state?.from?.pathname || '/';
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -66,7 +88,7 @@ export default function Signup() {
         title: 'Welcome to the community!',
         description: 'Your account has been created successfully.',
       });
-      navigate('/');
+      navigate(from, { replace: true });
     } else {
       toast({
         title: 'Signup failed',
@@ -159,22 +181,50 @@ export default function Signup() {
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
+                {password && (
+                  <div className="space-y-1.5 mt-2">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-muted-foreground">Password strength</span>
+                      <span className={`font-medium ${strength.color.replace('bg-', 'text-')}`}>
+                        {strength.label}
+                      </span>
+                    </div>
+                    <div className="flex gap-1 h-1.5 w-full">
+                      {[1, 2, 3, 4, 5].map((level) => (
+                        <div
+                          key={level}
+                          className={`h-full flex-1 rounded-full ${level <= strength.score ? strength.color : 'bg-secondary'
+                            }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
                 {errors.password && (
-                  <p className="text-sm text-destructive">{errors.password}</p>
+                  <p className="text-sm text-destructive mt-1">{errors.password}</p>
                 )}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">{t('password_label')} (Confirm)</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  placeholder="••••••••"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  className="bg-secondary border-border"
-                />
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    className="bg-secondary border-border pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
                 {errors.confirmPassword && (
                   <p className="text-sm text-destructive">{errors.confirmPassword}</p>
                 )}
@@ -202,7 +252,7 @@ export default function Signup() {
                 </div>
               </div>
 
-              <Button type="button" variant="outline" className="w-full" onClick={() => loginWithGoogle()}>
+              <Button type="button" variant="outline" className="w-full" onClick={() => loginWithGoogle(from)}>
                 <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
                   <path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
                 </svg>

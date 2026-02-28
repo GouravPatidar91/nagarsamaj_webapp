@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Briefcase, MapPin, Clock, Bookmark, BookmarkCheck, Loader2 } from 'lucide-react';
+import { Briefcase, MapPin, Clock, Bookmark, BookmarkCheck, Loader2, ArrowLeft } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
 import { Button } from '@/components/ui/button';
@@ -38,9 +38,7 @@ function JobsContent() {
 
   // Set first job as selected when jobs load
   useEffect(() => {
-    if (jobs && jobs.length > 0 && !selectedJob) {
-      setSelectedJob(jobs[0]);
-    }
+    // Intentionally removed auto-select so user sees the list first
   }, [jobs, selectedJob]);
 
   if (isLoading) {
@@ -139,24 +137,22 @@ function JobsContent() {
             </p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-5 gap-8">
-            {/* Job List */}
+          {!selectedJob ? (
             <motion.div
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="lg:col-span-2 space-y-4"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
               {jobs.map((job) => (
                 <motion.div
                   key={job.id}
                   variants={itemVariants}
                   onClick={() => setSelectedJob(job)}
-                  className={`card-elevated cursor-pointer transition-all ${selectedJob?.id === job.id ? 'ring-2 ring-primary' : ''
-                    }`}
+                  className="card-elevated cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all flex flex-col h-full"
                 >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                  <div className="flex items-start justify-between mb-3 gap-4">
+                    <div className="w-12 h-12 shrink-0 bg-primary/10 rounded-xl flex items-center justify-center">
                       <Briefcase className="w-6 h-6 text-primary" />
                     </div>
                     <button
@@ -164,7 +160,7 @@ function JobsContent() {
                         e.stopPropagation();
                         toggleSave(job.id);
                       }}
-                      className="text-muted-foreground hover:text-primary transition-colors"
+                      className="text-muted-foreground hover:text-primary transition-colors shrink-0"
                     >
                       {savedJobIds?.includes(job.id) ? (
                         <BookmarkCheck className="w-5 h-5 text-primary" />
@@ -173,9 +169,9 @@ function JobsContent() {
                       )}
                     </button>
                   </div>
-                  <h3 className="font-display font-semibold text-lg mb-1">{job.title}</h3>
-                  <p className="text-muted-foreground text-sm mb-3">{job.company}</p>
-                  <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                  <h3 className="font-display font-semibold text-lg mb-1 break-words line-clamp-2">{job.title}</h3>
+                  <p className="text-muted-foreground text-sm mb-4 flex-grow line-clamp-2">{job.company}</p>
+                  <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mt-auto pt-4 border-t border-border/50">
                     <span className="flex items-center gap-1">
                       <MapPin className="w-3 h-3" /> {job.location}
                     </span>
@@ -184,88 +180,93 @@ function JobsContent() {
                 </motion.div>
               ))}
             </motion.div>
-
-            {/* Job Detail */}
-            {selectedJob && (
-              <motion.div
-                key={selectedJob.id}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="lg:col-span-3"
+          ) : (
+            <motion.div
+              key={selectedJob.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-4xl mx-auto"
+            >
+              <Button
+                variant="ghost"
+                onClick={() => setSelectedJob(null)}
+                className="mb-6 -ml-4 text-muted-foreground hover:text-foreground"
               >
-                <div className="card-elevated sticky top-28">
-                  <div className="flex items-start justify-between mb-6">
-                    <div>
-                      <h2 className="text-2xl font-display font-bold mb-2">{selectedJob.title}</h2>
-                      <p className="text-lg text-muted-foreground">{selectedJob.company}</p>
-                    </div>
-                    <button
-                      onClick={() => toggleSave(selectedJob.id)}
-                      className="text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      {savedJobIds?.includes(selectedJob.id) ? (
-                        <BookmarkCheck className="w-6 h-6 text-primary" />
-                      ) : (
-                        <Bookmark className="w-6 h-6" />
-                      )}
-                    </button>
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Jobs
+              </Button>
+              <div className="card-elevated">
+                <div className="flex flex-col sm:flex-row items-start sm:items-start justify-between mb-6 gap-4">
+                  <div className="flex-1 min-w-0 pr-4">
+                    <h2 className="text-2xl font-display font-bold mb-2 break-words">{selectedJob.title}</h2>
+                    <p className="text-lg text-muted-foreground break-words">{selectedJob.company}</p>
                   </div>
-
-                  <div className="flex flex-wrap gap-4 mb-8">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <MapPin className="w-4 h-4" />
-                      <span>{selectedJob.location}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Briefcase className="w-4 h-4" />
-                      <span>{selectedJob.job_type}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Clock className="w-4 h-4" />
-                      <span>{t('job_posted')} {new Date(selectedJob.created_at).toLocaleDateString()}</span>
-                    </div>
-                  </div>
-
-                  {selectedJob.salary_range && (
-                    <div className="mb-8">
-                      <h3 className="font-display font-semibold text-lg mb-3">{t('job_salary_range')}</h3>
-                      <p className="text-2xl font-semibold gradient-text">{selectedJob.salary_range}</p>
-                    </div>
-                  )}
-
-                  <div className="mb-8">
-                    <h3 className="font-display font-semibold text-lg mb-3">{t('job_description')}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{selectedJob.description}</p>
-                  </div>
-
-                  {selectedJob.requirements && (
-                    <div className="mb-8">
-                      <h3 className="font-display font-semibold text-lg mb-3">{t('job_requirements')}</h3>
-                      <div
-                        className="text-muted-foreground space-y-2 [&>ul]:ml-6 [&>ul>li]:list-disc"
-                        dangerouslySetInnerHTML={{ __html: selectedJob.requirements }}
-                      />
-                    </div>
-                  )}
-
-                  <div className="flex gap-4">
-                    <Button className="btn-gold flex-1" onClick={handleApplyClick}>
-                      {t('btn_apply')}
-                    </Button>
-                    <Button variant="outline" onClick={() => toggleSave(selectedJob.id)}>
-                      {savedJobIds?.includes(selectedJob.id) ? t('btn_saved') : t('btn_save')}
-                    </Button>
-                  </div>
-
-                  {selectedJob.application_deadline && (
-                    <p className="text-sm text-muted-foreground mt-4 text-center">
-                      {t('job_deadline')}: {new Date(selectedJob.application_deadline).toLocaleDateString()}
-                    </p>
-                  )}
+                  <button
+                    onClick={() => toggleSave(selectedJob.id)}
+                    className="text-muted-foreground hover:text-primary transition-colors shrink-0 mt-1 sm:mt-0"
+                  >
+                    {savedJobIds?.includes(selectedJob.id) ? (
+                      <BookmarkCheck className="w-6 h-6 text-primary" />
+                    ) : (
+                      <Bookmark className="w-6 h-6" />
+                    )}
+                  </button>
                 </div>
-              </motion.div>
-            )}
-          </div>
+
+                <div className="flex flex-wrap gap-4 mb-8">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <MapPin className="w-4 h-4" />
+                    <span>{selectedJob.location}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Briefcase className="w-4 h-4" />
+                    <span>{selectedJob.job_type}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Clock className="w-4 h-4" />
+                    <span>{t('job_posted')} {new Date(selectedJob.created_at).toLocaleDateString()}</span>
+                  </div>
+                </div>
+
+                {selectedJob.salary_range && (
+                  <div className="mb-8">
+                    <h3 className="font-display font-semibold text-lg mb-3">{t('job_salary_range')}</h3>
+                    <p className="text-2xl font-semibold gradient-text">{selectedJob.salary_range}</p>
+                  </div>
+                )}
+
+                <div className="mb-8">
+                  <h3 className="font-display font-semibold text-lg mb-3">{t('job_description')}</h3>
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{selectedJob.description}</p>
+                </div>
+
+                {selectedJob.requirements && (
+                  <div className="mb-8">
+                    <h3 className="font-display font-semibold text-lg mb-3">{t('job_requirements')}</h3>
+                    <div
+                      className="text-muted-foreground space-y-2 [&>ul]:ml-6 [&>ul>li]:list-disc"
+                      dangerouslySetInnerHTML={{ __html: selectedJob.requirements }}
+                    />
+                  </div>
+                )}
+
+                <div className="flex flex-col sm:flex-row gap-4 mt-8 pt-6 border-t border-border/50">
+                  <Button className="btn-gold w-full sm:flex-1 py-6 text-lg" onClick={handleApplyClick}>
+                    {t('btn_apply')}
+                  </Button>
+                  <Button className="w-full sm:w-auto py-6" variant="outline" onClick={() => toggleSave(selectedJob.id)}>
+                    {savedJobIds?.includes(selectedJob.id) ? t('btn_saved') : t('btn_save')}
+                  </Button>
+                </div>
+
+                {selectedJob.application_deadline && (
+                  <p className="text-sm text-muted-foreground mt-4 text-center">
+                    {t('job_deadline')}: {new Date(selectedJob.application_deadline).toLocaleDateString()}
+                  </p>
+                )}
+              </div>
+            </motion.div>
+          )}
         </div>
       </section>
 

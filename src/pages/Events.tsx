@@ -54,7 +54,7 @@ export default function Events() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="flex gap-2 mb-10"
+            className="flex flex-wrap gap-2 mb-10"
           >
             {(['all', 'upcoming', 'past'] as const).map((status) => (
               <button
@@ -75,7 +75,7 @@ export default function Events() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="grid md:grid-cols-2 gap-8"
+            className="grid grid-cols-1 md:grid-cols-2 gap-8"
           >
             {events?.map((event) => {
               const eventDate = new Date(event.event_date);
@@ -128,14 +128,14 @@ export default function Events() {
                         {event.title}
                       </h3>
                       <p className="text-muted-foreground line-clamp-2">{event.description}</p>
-                      <div className="flex items-center justify-between mt-6 pt-4 border-t border-border/50">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-6 pt-4 border-t border-border/50 gap-4 sm:gap-0">
                         {event.max_attendees && (
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Users className="w-4 h-4" />
                             <span>Max {event.max_attendees} attendees</span>
                           </div>
                         )}
-                        <span className="text-primary font-medium text-sm ml-auto">
+                        <span className="text-primary font-medium text-sm sm:ml-auto">
                           {isUpcoming ? 'Register Now →' : 'View Details →'}
                         </span>
                       </div>

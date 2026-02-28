@@ -162,12 +162,12 @@ export function Navbar() {
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                <Link to="/login">
+                <Link to="/login" state={{ from: location }}>
                   <Button variant="ghost" size="sm">
                     {t('login_button')}
                   </Button>
                 </Link>
-                <Link to="/signup">
+                <Link to="/signup" state={{ from: location }}>
                   <Button variant="default" size="sm" className="btn-gold">
                     {t('nav_join_community')}
                   </Button>
@@ -274,13 +274,13 @@ export function Navbar() {
                       </div>
                     </div>
                   ) : (
-                    <div className="space-y-2">
-                      <Link to="/login" onClick={() => setIsOpen(false)}>
+                    <div className="flex flex-col gap-3">
+                      <Link to="/login" state={{ from: location }} onClick={() => setIsOpen(false)}>
                         <Button variant="outline" className="w-full">
                           {t('login_button')}
                         </Button>
                       </Link>
-                      <Link to="/signup" onClick={() => setIsOpen(false)}>
+                      <Link to="/signup" state={{ from: location }} onClick={() => setIsOpen(false)}>
                         <Button className="w-full btn-gold">
                           {t('nav_join_community')}
                         </Button>

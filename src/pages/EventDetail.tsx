@@ -57,12 +57,12 @@ export default function EventDetail() {
               Back to Events
             </Link>
 
-            <div className="grid lg:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
               {/* Main Content */}
               <div className="lg:col-span-2">
                 <div className={`inline-block px-3 py-1 rounded-full text-xs font-medium uppercase mb-4 ${new Date(event.event_date) >= new Date()
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted text-muted-foreground'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground'
                   }`}>
                   {new Date(event.event_date) >= new Date() ? 'Upcoming' : 'Past'}
                 </div>
@@ -98,7 +98,7 @@ export default function EventDetail() {
               </div>
 
               {/* Sidebar */}
-              <div className="lg:col-span-1">
+              <div className="lg:col-span-1 mt-8 lg:mt-0">
                 <div className="card-elevated sticky top-28">
                   <h3 className="text-xl font-display font-semibold mb-6">Event Details</h3>
 

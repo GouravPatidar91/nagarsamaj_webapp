@@ -159,9 +159,9 @@ function AdminContent() {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg flex items-center gap-3"
+              className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg flex flex-col sm:flex-row items-start sm:items-center gap-3"
             >
-              <AlertCircle className="w-5 h-5 text-yellow-500" />
+              <AlertCircle className="w-5 h-5 text-yellow-500 flex-shrink-0" />
               <p className="text-sm">
                 <span className="font-semibold">{pendingStats.total} {t('pending_items')}:</span>{' '}
                 {pendingStats.events > 0 && `${pendingStats.events} events`}
@@ -177,7 +177,7 @@ function AdminContent() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8"
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4 mb-8"
           >
             {userTabs.map((tab) => (
               <button

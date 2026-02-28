@@ -10,6 +10,7 @@ export interface AppUser {
   name: string;
   isAdmin: boolean;
   role: AppRole;
+  status: 'pending' | 'approved' | 'banned';
   avatar?: string;
 }
 
@@ -18,7 +19,7 @@ interface AuthContextType {
   session: Session | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  loginWithGoogle: () => Promise<{ success: boolean; error?: string }>;
+  loginWithGoogle: (redirectTo?: string) => Promise<{ success: boolean; error?: string }>;
   signup: (email: string, password: string, name: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
@@ -56,6 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         name: profile?.full_name || email.split('@')[0],
         isAdmin: isAdmin,
         role: role,
+        status: (profile as any)?.account_status || 'pending',
         avatar: profile?.avatar_url || undefined,
       });
     } catch (error) {
@@ -66,6 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         name: email.split('@')[0],
         isAdmin: false,
         role: 'user',
+        status: 'pending',
       });
     }
   };
@@ -146,12 +149,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const loginWithGoogle = async (): Promise<{ success: boolean; error?: string }> => {
+  const loginWithGoogle = async (redirectTo?: string): Promise<{ success: boolean; error?: string }> => {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: `${window.location.origin}${redirectTo && redirectTo !== '/' ? redirectTo : ''}`,
         },
       });
 

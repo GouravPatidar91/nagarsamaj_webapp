@@ -267,7 +267,7 @@ function MatrimonyContent() {
                 <div className="bg-card border border-border rounded-xl p-6">
                   <div className="flex items-center justify-between flex-wrap gap-4">
                     <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-xl overflow-hidden bg-muted flex-shrink-0">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-muted flex-shrink-0">
                         {myProfile.photo_url ? (
                           <img src={myProfile.photo_url} alt="Your profile" className="w-full h-full object-cover" />
                         ) : (
@@ -297,7 +297,7 @@ function MatrimonyContent() {
               ) : (
                 <div className="bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 rounded-xl p-6">
                   <div className="flex items-center justify-between flex-wrap gap-4">
-                    <div>
+                    <div className="mb-4 sm:mb-0">
                       <h3 className="font-semibold text-lg">{t('create_profile_card_title')}</h3>
                       <p className="text-muted-foreground text-sm mt-1">
                         {t('create_profile_card_desc')}
@@ -342,7 +342,7 @@ function MatrimonyContent() {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
               {profiles.filter(p => p.user_id !== user?.id).map((profile) => (
                 <motion.div key={profile.id} variants={itemVariants} className="card-elevated group">
@@ -432,7 +432,7 @@ function MatrimonyContent() {
           </DialogHeader>
           {selectedProfile && (
             <div className="space-y-6">
-              <div className="flex items-start gap-6">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
                 <div className="w-32 h-32 rounded-xl overflow-hidden flex-shrink-0 bg-muted">
                   {selectedProfile.photo_url ? (
                     <img
@@ -446,13 +446,13 @@ function MatrimonyContent() {
                     </div>
                   )}
                 </div>
-                <div>
+                <div className="text-center sm:text-left">
                   <h2 className="text-2xl font-display font-bold">{selectedProfile.full_name}</h2>
                   <p className="text-muted-foreground">
                     {selectedProfile.age ? `${selectedProfile.age} years` : 'Age not specified'}
                     {selectedProfile.gender && ` • ${selectedProfile.gender}`}
                   </p>
-                  <div className="mt-4 space-y-2">
+                  <div className="mt-4 space-y-2 text-left">
                     {selectedProfile.occupation && (
                       <div className="flex items-center gap-2 text-sm">
                         <Briefcase className="w-4 h-4 text-primary" />
@@ -482,7 +482,7 @@ function MatrimonyContent() {
                 </div>
               )}
 
-              <div className="flex gap-3 pt-4 border-t border-border/50">
+              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border/50">
                 <Button
                   className={`flex-1 ${!interestedProfileIds.includes(selectedProfile.id) ? 'btn-gold' : ''}`}
                   variant={interestedProfileIds.includes(selectedProfile.id) ? 'secondary' : 'default'}

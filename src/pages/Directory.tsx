@@ -99,7 +99,7 @@ export default function Directory() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {filteredBusinesses.map((business) => (
               <motion.div
@@ -163,7 +163,7 @@ export default function Directory() {
                   </div>
 
                   {business.phone && (
-                    <div className="mt-4 pt-4 border-t border-border/50 flex gap-3">
+                    <div className="mt-4 pt-4 border-t border-border/50 flex flex-col sm:flex-row gap-3">
                       <a
                         href={`tel:${business.phone.replace(/\D/g, '')}`}
                         className="flex-1 text-center py-2 rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/80 text-sm font-medium transition-colors"

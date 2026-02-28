@@ -84,7 +84,7 @@ export default function News() {
               className="mb-12"
             >
               <Link to={`/news/${filteredArticles[0].id}`} className="block group">
-                <div className="grid md:grid-cols-2 gap-8 card-elevated p-0 overflow-hidden">
+                <div className="flex flex-col md:grid md:grid-cols-2 gap-0 md:gap-8 card-elevated p-0 overflow-hidden">
                   <div className="aspect-[4/3] md:aspect-auto overflow-hidden">
                     <img
                       src={filteredArticles[0].image_url || 'https://images.unsplash.com/photo-1585776245991-cf89dd7fc73a?w=800'}
@@ -116,7 +116,7 @@ export default function News() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {filteredArticles.slice(1).map((article) => (
               <motion.div key={article.id} variants={itemVariants}>

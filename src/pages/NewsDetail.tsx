@@ -154,8 +154,8 @@ export default function NewsDetail() {
               transition={{ delay: 0.3 }}
               className="mt-16"
             >
-              <h2 className="text-2xl font-display font-bold mb-8">More in {article.category}</h2>
-              <div className="grid md:grid-cols-3 gap-6">
+              <h2 className="text-2xl font-display font-bold mb-8 text-center md:text-left">More in {article.category}</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {relatedArticles.map((related) => (
                   <Link
                     key={related.id}

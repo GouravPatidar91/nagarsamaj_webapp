@@ -1,23 +1,17 @@
 import { useState } from 'react';
-import { Check, X, Trash2, Edit, MoreHorizontal, Shield, ShieldCheck, User } from 'lucide-react';
+import { ShieldCheck, ShieldAlert, ShieldX, MoreHorizontal, Check, X, ShieldBan, UserCog } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuPortal,
 } from '@/components/ui/dropdown-menu';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -26,118 +20,47 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
-
-interface UserWithRole {
-  id: string;
-  user_id: string;
-  full_name: string | null;
-  avatar_url: string | null;
-  created_at: string;
-  role: string;
-}
+import { useAllUsers, useUpdateUserStatus, useUpdateUserRole } from '@/hooks/useUsers';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function AdminUsersTab() {
   const { toast } = useToast();
   const { user: currentUser } = useAuth();
-  const queryClient = useQueryClient();
-  const [editingUser, setEditingUser] = useState<UserWithRole | null>(null);
-  const [newRole, setNewRole] = useState<string>('user');
+  const { data: users, isLoading } = useAllUsers();
+  const updateStatusMutation = useUpdateUserStatus();
+  const updateRoleMutation = useUpdateUserRole();
 
-  const { data: users, isLoading } = useQuery({
-    queryKey: ['admin-users'],
-    queryFn: async () => {
-      // Get all profiles
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
+  const isSuperAdmin = currentUser?.role === 'super_admin';
 
-      if (profilesError) throw profilesError;
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
-      // Get all user roles
-      const { data: roles, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('*');
-
-      if (rolesError) throw rolesError;
-
-      // Combine profiles with roles
-      const usersWithRoles: UserWithRole[] = (profiles || []).map((profile) => {
-        const userRole = roles?.find((r) => r.user_id === profile.user_id);
-        return {
-          id: profile.id,
-          user_id: profile.user_id,
-          full_name: profile.full_name,
-          avatar_url: profile.avatar_url,
-          created_at: profile.created_at,
-          role: userRole?.role || 'user',
-        };
-      });
-
-      return usersWithRoles;
-    },
-  });
-
-  const updateRoleMutation = useMutation({
-    mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
-      // First check if role exists
-      const { data: existingRole } = await supabase
-        .from('user_roles')
-        .select('*')
-        .eq('user_id', userId)
-        .single();
-
-      if (existingRole) {
-        const { error } = await supabase
-          .from('user_roles')
-          .update({ role: role as any })
-          .eq('user_id', userId);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase
-          .from('user_roles')
-          .insert({ user_id: userId, role: role as any });
-        if (error) throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
-      toast({ title: 'Role updated', description: 'User role has been updated successfully.' });
-      setEditingUser(null);
-    },
-    onError: (error: Error) => {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
-    },
-  });
-
-  const getRoleIcon = (role: string) => {
-    switch (role) {
-      case 'super_admin':
-        return <ShieldCheck className="w-4 h-4" />;
-      case 'content_admin':
-      case 'moderation_admin':
-        return <Shield className="w-4 h-4" />;
-      default:
-        return <User className="w-4 h-4" />;
+  const handleUpdateStatus = async (userId: string, newStatus: 'pending' | 'approved' | 'banned') => {
+    try {
+      await updateStatusMutation.mutateAsync({ userId, status: newStatus });
+      toast({ title: `User status updated to ${newStatus}` });
+    } catch (error: any) {
+      toast({ title: 'Error updating user', description: error.message, variant: 'destructive' });
     }
   };
 
-  const getRoleColor = (role: string) => {
-    switch (role) {
-      case 'super_admin':
-        return 'bg-primary/20 text-primary';
-      case 'content_admin':
-        return 'bg-accent/20 text-accent';
-      case 'moderation_admin':
-        return 'bg-teal/20 text-teal';
-      default:
-        return 'bg-secondary text-secondary-foreground';
+  const handleUpdateRole = async (userId: string, newRole: string) => {
+    try {
+      await updateRoleMutation.mutateAsync({ userId, role: newRole });
+      toast({ title: `User role updated to ${newRole.replace('_', ' ')}` });
+    } catch (error: any) {
+      toast({ title: 'Error updating role', description: error.message, variant: 'destructive' });
     }
   };
+
+  const filteredUsers = users?.filter((user: any) => {
+    const userStatus = user.account_status || 'pending';
+    const matchesStatus = statusFilter === 'all' || userStatus === statusFilter;
+    const matchesSearch = !searchQuery ||
+      (user.full_name || '').toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesStatus && matchesSearch;
+  });
 
   if (isLoading) {
     return (
@@ -151,108 +74,147 @@ export function AdminUsersTab() {
 
   return (
     <>
+      <div className="p-4 border-b border-border/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h3 className="font-semibold">Users Management ({filteredUsers?.length || 0})</h3>
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+          <Input
+            placeholder="Search by name..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full sm:w-48"
+          />
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-40">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="approved">Approved</SelectItem>
+              <SelectItem value="banned">Banned</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="border-b border-border/50">
-              <th className="text-left py-4 px-4 font-medium text-muted-foreground">User</th>
+              <th className="text-left py-4 px-4 font-medium text-muted-foreground">Name</th>
+              <th className="text-left py-4 px-4 font-medium text-muted-foreground">Joined Date</th>
+              <th className="text-left py-4 px-4 font-medium text-muted-foreground">Verification Status</th>
               <th className="text-left py-4 px-4 font-medium text-muted-foreground">Role</th>
-              <th className="text-left py-4 px-4 font-medium text-muted-foreground">Joined</th>
               <th className="text-right py-4 px-4 font-medium text-muted-foreground">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {users?.map((user) => (
-              <tr key={user.id} className="border-b border-border/30 hover:bg-card/50">
-                <td className="py-4 px-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-                      {user.avatar_url ? (
-                        <img src={user.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" />
-                      ) : (
-                        <User className="w-5 h-5 text-muted-foreground" />
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-medium">{user.full_name || 'Unnamed User'}</p>
-                      <p className="text-sm text-muted-foreground">{user.user_id.slice(0, 8)}...</p>
-                    </div>
-                  </div>
-                </td>
-                <td className="py-4 px-4">
-                  <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium ${getRoleColor(user.role)}`}>
-                    {getRoleIcon(user.role)}
-                    {user.role.replace('_', ' ')}
-                  </span>
-                </td>
-                <td className="py-4 px-4 text-muted-foreground">
-                  {new Date(user.created_at).toLocaleDateString()}
-                </td>
-                <td className="py-4 px-4 text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
-                        <MoreHorizontal className="w-4 h-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-card border-border">
-                      {currentUser?.role === 'super_admin' && (
-                        <DropdownMenuItem onClick={() => {
-                          setEditingUser(user);
-                          setNewRole(user.role);
-                        }}>
-                          <Edit className="w-4 h-4 mr-2" /> Change Role
-                        </DropdownMenuItem>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </td>
-              </tr>
-            ))}
-            {(!users || users.length === 0) && (
+            {(!filteredUsers || filteredUsers.length === 0) ? (
               <tr>
                 <td colSpan={4} className="py-8 text-center text-muted-foreground">
-                  No users found
+                  No users found matching the current filters.
                 </td>
               </tr>
+            ) : (
+              filteredUsers.map((user: any) => {
+                const status = user.account_status || 'pending';
+
+                return (
+                  <tr key={user.id} className="border-b border-border/30 hover:bg-card/50">
+                    <td className="py-4 px-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
+                          {user.avatar_url ? (
+                            <img src={user.avatar_url} alt={user.full_name} className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="font-semibold text-xs">{(user.full_name || 'U').charAt(0).toUpperCase()}</span>
+                          )}
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-medium max-w-[200px] truncate">{user.full_name || 'Unknown User'}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-4 px-4 text-muted-foreground">
+                      {new Date(user.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="py-4 px-4">
+                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${status === 'approved' ? 'bg-green-500/10 text-green-500' :
+                        status === 'banned' ? 'bg-destructive/10 text-destructive' :
+                          'bg-yellow-500/10 text-yellow-500'
+                        }`}>
+                        {status === 'approved' ? <ShieldCheck className="w-3.5 h-3.5" /> :
+                          status === 'banned' ? <ShieldX className="w-3.5 h-3.5" /> :
+                            <ShieldAlert className="w-3.5 h-3.5" />}
+                        {status.charAt(0).toUpperCase() + status.slice(1)}
+                      </span>
+                    </td>
+                    <td className="py-4 px-4">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                        {(user.role || 'user').replace('_', ' ').toUpperCase()}
+                      </span>
+                    </td>
+                    <td className="py-4 px-4 text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-[160px]">
+                          {status !== 'approved' && (
+                            <DropdownMenuItem onClick={() => handleUpdateStatus(user.user_id, 'approved')}>
+                              <Check className="w-4 h-4 mr-2 text-green-500" />
+                              <span>Approve User</span>
+                            </DropdownMenuItem>
+                          )}
+                          {status !== 'banned' && (
+                            <DropdownMenuItem onClick={() => handleUpdateStatus(user.user_id, 'banned')} className="text-destructive focus:text-destructive">
+                              <ShieldBan className="w-4 h-4 mr-2" />
+                              <span>Ban User</span>
+                            </DropdownMenuItem>
+                          )}
+                          {status === 'banned' && (
+                            <DropdownMenuItem onClick={() => handleUpdateStatus(user.user_id, 'pending')}>
+                              <X className="w-4 h-4 mr-2" />
+                              <span>Remove Ban</span>
+                            </DropdownMenuItem>
+                          )}
+
+                          {isSuperAdmin && (
+                            <DropdownMenuSub>
+                              <DropdownMenuSubTrigger>
+                                <UserCog className="w-4 h-4 mr-2" />
+                                <span>Change Role</span>
+                              </DropdownMenuSubTrigger>
+                              <DropdownMenuPortal>
+                                <DropdownMenuSubContent>
+                                  <DropdownMenuItem onClick={() => handleUpdateRole(user.user_id, 'user')}>
+                                    User
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleUpdateRole(user.user_id, 'content_admin')}>
+                                    Content Admin
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleUpdateRole(user.user_id, 'moderation_admin')}>
+                                    Moderation Admin
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleUpdateRole(user.user_id, 'super_admin')}>
+                                    Super Admin
+                                  </DropdownMenuItem>
+                                </DropdownMenuSubContent>
+                              </DropdownMenuPortal>
+                            </DropdownMenuSub>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
       </div>
-
-      <Dialog open={!!editingUser} onOpenChange={() => setEditingUser(null)}>
-        <DialogContent className="bg-card border-border">
-          <DialogHeader>
-            <DialogTitle>Change User Role</DialogTitle>
-            <DialogDescription>
-              Update the role for {editingUser?.full_name || 'this user'}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <Label>Role</Label>
-            <Select value={newRole} onValueChange={setNewRole}>
-              <SelectTrigger className="mt-2">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="user">User</SelectItem>
-                <SelectItem value="content_admin">Content Admin</SelectItem>
-                <SelectItem value="moderation_admin">Moderation Admin</SelectItem>
-                <SelectItem value="super_admin">Super Admin</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditingUser(null)}>Cancel</Button>
-            <Button
-              onClick={() => editingUser && updateRoleMutation.mutate({ userId: editingUser.user_id, role: newRole })}
-              disabled={updateRoleMutation.isPending}
-            >
-              {updateRoleMutation.isPending ? 'Updating...' : 'Update Role'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </>
   );
 }

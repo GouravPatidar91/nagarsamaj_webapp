@@ -18,14 +18,14 @@ export default function AboutUs() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="max-w-4xl mx-auto prose prose-lg dark:prose-invert"
+                    className="max-w-4xl mx-auto prose prose-lg dark:prose-invert px-4 md:px-0"
                 >
-                    <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-8 md:p-12 shadow-sm">
+                    <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-6 md:p-12 shadow-sm">
                         <h2 className="font-display text-2xl md:text-3xl font-bold mb-6 text-primary">
                             {t('about_history_title')}
                         </h2>
 
-                        <div className="space-y-6 text-muted-foreground leading-relaxed text-justify">
+                        <div className="space-y-6 text-muted-foreground leading-relaxed">
                             <p className="font-semibold text-foreground text-center text-xl mb-8">
                                 "श्री हाटकेश्वरो सदा विजयते।"
                             </p>
@@ -46,7 +46,7 @@ export default function AboutUs() {
                                 <span>❖ ❖ ❖</span>
                             </div>
 
-                            <blockquote className="border-l-4 border-primary/50 pl-4 italic bg-muted/30 p-4 rounded-r-lg">
+                            <blockquote className="border-l-4 border-primary/50 pl-4 italic bg-muted/30 p-4 rounded-r-lg text-sm md:text-base">
                                 आनर्तविषये रम्यं सर्वतीर्थमयं शुभम्। हाटकेश्वरजं क्षेत्रं महापातकानाशम्।<br />
                                 मर्यार्हाघंत्दिलिङ्ग हाटकेनविनिर्मितम् । ख्यार्तियास्यति सर्वत्र पाताले हाटकेश्वरम् ।
                             </blockquote>
@@ -71,7 +71,7 @@ export default function AboutUs() {
                                 महाभारत में अर्जुन के द्वारा युधिष्ठिर के राजसूय यज्ञ में विभिन्न उत्तरी देशों पर विजय प्राप्त करने के वर्णन में इन किंपुरुषवर्ष तथा हरिवर्ष में प्राप्त जामुन की आभा वाले जाम्बुनद स्वर्ण का प्रकरण तथा कई पुराणों में पाताल लोक के हाटक स्वर्ण का वर्णन आता है।
                             </p>
 
-                            <div className="bg-primary/5 p-6 rounded-xl border border-primary/10 my-8 text-center text-primary font-medium">
+                            <div className="bg-primary/5 p-4 md:p-6 rounded-xl border border-primary/10 my-8 text-center text-primary font-medium text-sm md:text-base">
                                 आकाशे तारके लिंङ्ग पाताले हाटकेश्वरम्। मृत्युलोके महाकालं लिंङ्गत्रय नमोस्तुते।
                             </div>
 
@@ -83,7 +83,7 @@ export default function AboutUs() {
                                 ब्रह्माजी द्वारा स्वर्ण शिवलिंग की स्थापना पश्चात् हाटकेश्वर महादेव की स्तुति की गई। वामनपुराण में वामन अवतार तथा दैत्यराज बलि की पाताल लोक की कथाओं के साथ इस दिव्य स्तुति का भी वर्णन है। इसका पाठ यदि कोई मनुष्य करे तो उसे अनायास ही सभी सिद्धियाँ प्राप्त हो जाती हैं। यह स्तुति इस प्रकार है--
                             </p>
 
-                            <div className="bg-muted/30 p-6 rounded-xl text-sm md:text-base leading-loose border border-border/50 font-serif">
+                            <div className="bg-muted/30 p-6 rounded-xl text-sm md:text-base leading-loose border border-border/50 font-serif mb-8 text-center">
                                 <p>
                                     ॐ नमोस्तु शर्वशम्भो त्रिनेत्र चारुगात्र<br />
                                     त्रैलोक्यनाथ उमापते दक्षयज्ञ विध्वंसकारक<br />
@@ -109,14 +109,14 @@ export default function AboutUs() {
                                 नागर ब्राह्मण सदा ही महाशिव के भक्त रहे हैं। उनकी भक्ति और प्रमाणस्वरूप कुछ स्तोत्र बड़े प्रसिद्द हैं।
                             </p>
 
-                            <blockquote className="border-l-4 border-amber-500/50 pl-4 italic my-4">
+                            <blockquote className="border-l-4 border-amber-500/50 pl-6 italic my-6 text-sm md:text-base text-muted-foreground">
                                 भजन्ति हाटकेश्वरं सुरभक्ति भावतोत्रये ।<br />
                                 भवन्ति हाटकेश्वरा: प्रमाणमत्र नागरा:।।
                             </blockquote>
 
                             <p>तथा-</p>
 
-                            <blockquote className="border-l-4 border-amber-500/50 pl-4 italic my-4">
+                            <blockquote className="border-l-4 border-amber-500/50 pl-6 italic my-6 text-sm md:text-base text-muted-foreground">
                                 गोत्र शर्मावटंकस्य, कुलश्च प्रवर: शिव:।<br />
                                 वेद: गणपति: देवी नव जानन्ति नागरा:।।
                             </blockquote>
@@ -129,7 +129,7 @@ export default function AboutUs() {
                                 गोत्र, शर्म, अवंटक, कुल, प्रवर, शिव, वेद गणपति एवं देवी।
                             </p>
 
-                            <p className="text-center font-medium mt-8 mb-4">
+                            <p className="text-center font-medium mt-10 mb-4 text-lg">
                                 एक बार पुनः श्री हाटकेश्वर महादेव को नमन करते हुए उनसे त्रैलोक्य के कल्याण की कामना करें। 🙏
                             </p>
                         </div>

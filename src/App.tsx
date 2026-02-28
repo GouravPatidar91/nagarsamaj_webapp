@@ -7,6 +7,9 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/shared/ProtectedRoute";
 import "./i18n";
 import LanguageWelcomeDialog from "@/components/LanguageWelcomeDialog";
+import { ScrollToTop } from "@/components/shared/ScrollToTop";
+import { SessionHandler } from "@/components/shared/SessionHandler";
+import { AccessControl } from "@/components/shared/AccessControl";
 import { Suspense, lazy } from "react";
 import { Loader2 } from "lucide-react";
 
@@ -41,24 +44,28 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ScrollToTop />
+          <SessionHandler />
           <LanguageWelcomeDialog />
           <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/news" element={<ProtectedRoute><News /></ProtectedRoute>} />
-              <Route path="/news/:id" element={<ProtectedRoute><NewsDetail /></ProtectedRoute>} />
-              <Route path="/events" element={<Events />} />
-              <Route path="/events/:id" element={<EventDetail />} />
-              <Route path="/jobs" element={<ProtectedRoute><Jobs /></ProtectedRoute>} />
-              <Route path="/matrimony" element={<ProtectedRoute><Matrimony /></ProtectedRoute>} />
-              <Route path="/directory" element={<ProtectedRoute><Directory /></ProtectedRoute>} />
-              <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/about" element={<AboutUs />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <AccessControl>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/news" element={<ProtectedRoute><News /></ProtectedRoute>} />
+                <Route path="/news/:id" element={<ProtectedRoute><NewsDetail /></ProtectedRoute>} />
+                <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
+                <Route path="/events/:id" element={<ProtectedRoute><EventDetail /></ProtectedRoute>} />
+                <Route path="/jobs" element={<ProtectedRoute><Jobs /></ProtectedRoute>} />
+                <Route path="/matrimony" element={<ProtectedRoute><Matrimony /></ProtectedRoute>} />
+                <Route path="/directory" element={<ProtectedRoute><Directory /></ProtectedRoute>} />
+                <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/about" element={<AboutUs />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </AccessControl>
           </Suspense>
         </BrowserRouter>
       </TooltipProvider>
