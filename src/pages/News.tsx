@@ -22,14 +22,24 @@ const itemVariants = {
 export default function News() {
   const { t } = useTranslation();
   const [activeCategory, setActiveCategory] = useState('All');
+  const [isCategoryLoading, setIsCategoryLoading] = useState(false);
   const { data: articles, isLoading } = useArticles(activeCategory === 'All' ? undefined : activeCategory);
+
+  const handleCategoryChange = (category: string) => {
+    if (category === activeCategory) return;
+    setIsCategoryLoading(true);
+    setActiveCategory(category);
+    setTimeout(() => {
+      setIsCategoryLoading(false);
+    }, 500);
+  };
 
   // Get unique categories from articles
   const categories = ['All', ...Array.from(new Set(articles?.map(a => a.category) || []))];
 
   const filteredArticles = articles || [];
 
-  if (isLoading) {
+  if (isLoading || isCategoryLoading) {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-[60vh]">
@@ -64,7 +74,7 @@ export default function News() {
             {categories.map((category) => (
               <button
                 key={category}
-                onClick={() => setActiveCategory(category)}
+                onClick={() => handleCategoryChange(category)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeCategory === category
                   ? 'bg-primary text-primary-foreground'
                   : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'

@@ -36,10 +36,12 @@ function JobsContent() {
   const [isApplicationDialogOpen, setIsApplicationDialogOpen] = useState(false);
   const { toast } = useToast();
 
-  // Set first job as selected when jobs load
+  // Scroll to top when a job is selected
   useEffect(() => {
-    // Intentionally removed auto-select so user sees the list first
-  }, [jobs, selectedJob]);
+    if (selectedJob) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [selectedJob]);
 
   if (isLoading) {
     return (
@@ -197,9 +199,9 @@ function JobsContent() {
               </Button>
               <div className="card-elevated">
                 <div className="flex flex-col sm:flex-row items-start sm:items-start justify-between mb-6 gap-4">
-                  <div className="flex-1 min-w-0 pr-4">
-                    <h2 className="text-2xl font-display font-bold mb-2 break-words">{selectedJob.title}</h2>
-                    <p className="text-lg text-muted-foreground break-words">{selectedJob.company}</p>
+                  <div className="flex-1 min-w-0 w-full sm:w-auto pr-4">
+                    <h2 className="text-2xl font-display font-bold mb-2 break-words [word-break:break-word]">{selectedJob.title}</h2>
+                    <p className="text-lg text-muted-foreground break-words [word-break:break-word]">{selectedJob.company}</p>
                   </div>
                   <button
                     onClick={() => toggleSave(selectedJob.id)}

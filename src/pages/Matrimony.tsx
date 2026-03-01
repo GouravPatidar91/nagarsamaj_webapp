@@ -426,7 +426,7 @@ function MatrimonyContent() {
 
       {/* Profile Detail Modal */}
       <Dialog open={!!selectedProfile} onOpenChange={() => setSelectedProfile(null)}>
-        <DialogContent className="max-w-2xl bg-card border-border">
+        <DialogContent className="max-w-2xl bg-card border-border max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="sr-only">Profile Details</DialogTitle>
           </DialogHeader>
