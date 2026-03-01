@@ -29,6 +29,7 @@ export function Footer() {
               <li><Link to="/directory" className="text-muted-foreground hover:text-primary transition-colors">{t('nav_directory')}</Link></li>
               <li><Link to="/about" className="text-muted-foreground hover:text-primary transition-colors">{t('about_title')}</Link></li>
               <li><a href="https://acrobat.adobe.com/id/urn:aaid:sc:AP:6d0ae172-7bcf-41a9-ab4b-9b5d8e11d18d" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">{t('footer_core_members')}</a></li>
+              <li><a href="/hatkeshwar samachar.pdf" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">Hatkeshwar Samachar</a></li>
             </ul>
           </div>
 
@@ -45,7 +46,7 @@ export function Footer() {
 
         <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} {t('app_title')}. {t('footer_rights')}</p>
-          <p>{t('footer_made_by')}</p>
+          <a href="https://dnpstudios.vercel.app/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">{t('footer_made_by')}</a>
         </div>
       </div>
     </footer>
