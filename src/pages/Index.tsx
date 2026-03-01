@@ -169,7 +169,7 @@ export default function Index() {
                   </Link>
                 )}
                 <Link to="/news">
-                  <Button variant="outline" size="lg" className="text-lg px-8 border-white/20 text-white hover:bg-white/10 hover:text-white">
+                  <Button variant="outline" size="lg" className="text-lg px-8 bg-white hover:bg-white/90 text-gray-900 border-none transition-colors">
                     {t('btn_latest_news')}
                   </Button>
                 </Link>
@@ -193,7 +193,7 @@ export default function Index() {
       {/* Latest News */}
       {canViewContent && (
         <>
-          <section className="py-20">
+          <section className="py-24 section-alt">
             <div className="section-container">
               <SectionHeader
                 title={t('news_section')}
@@ -255,7 +255,7 @@ export default function Index() {
           </section>
 
           {/* Upcoming Events */}
-          <section className="py-20 bg-card/30">
+          <section className="py-24 section-inverse">
             <div className="section-container">
               <SectionHeader
                 title={t('events_section')}
@@ -304,7 +304,7 @@ export default function Index() {
           </section>
 
           {/* Jobs Preview */}
-          <section className="py-20">
+          <section className="py-24 section-alt">
             <div className="section-container">
               <SectionHeader
                 title={t('jobs_title')}
@@ -362,7 +362,7 @@ export default function Index() {
       )}
 
       {/* Community CTA */}
-      <section className="py-20 bg-card/30">
+      <section className="py-24 bg-[#FCF5EB]">
         <div className="section-container">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -383,10 +383,10 @@ export default function Index() {
             <p className="text-xl text-muted-foreground mb-10">
               {isAuthenticated ? t('home_member_subtitle') : t('cta_subtitle')}
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex flex-wrap justify-center gap-4 mt-8">
               {!isAuthenticated && (
                 <Link to="/signup">
-                  <Button size="lg" className="btn-gold text-lg px-10">
+                  <Button size="lg" className="bg-[#ea580c] hover:bg-[#c2410c] text-white rounded-md px-8 py-6 text-base font-medium transition-colors">
                     <Users className="mr-2 w-5 h-5" />
                     {t('cta_btn_member')}
                   </Button>
@@ -394,7 +394,7 @@ export default function Index() {
               )}
               {isAuthenticated && user?.status === 'approved' && (
                 <a href="/Excel/MPNAGARSAMAJ.xlsx" target="_blank" rel="noopener noreferrer" className="inline-block">
-                  <Button variant="outline" size="lg" className="text-lg px-10">
+                  <Button variant="outline" size="lg" className="bg-white hover:bg-gray-50 text-gray-900 border border-gray-200 rounded-md px-8 py-6 text-base font-medium shadow-sm transition-all">
                     <Users className="mr-2 w-5 h-5" />
                     {t('cta_btn_see_members')}
                   </Button>

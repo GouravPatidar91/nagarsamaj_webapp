@@ -5,7 +5,7 @@ export function Footer() {
   const { t } = useTranslation();
 
   return (
-    <footer className="border-t border-border/50 bg-card/30">
+    <footer className="border-t border-[#F1E0C9] bg-[#FDF6ED]">
       <div className="section-container py-12 md:py-16">
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-8">
           <div className="col-span-2 md:col-span-1">
