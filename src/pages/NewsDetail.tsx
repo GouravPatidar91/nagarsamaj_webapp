@@ -59,13 +59,13 @@ export default function NewsDetail() {
           >
             {/* Hero Image */}
             {article.image_url && (
-              <div className="relative aspect-[21/9] overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20">
+              <div className="relative aspect-[21/9] overflow-hidden bg-white">
                 <img
                   src={article.image_url}
                   alt={article.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
               </div>
             )}
 
@@ -162,11 +162,11 @@ export default function NewsDetail() {
                     to={`/news/${related.id}`}
                     className="group bg-card rounded-xl overflow-hidden border border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
                   >
-                    <div className="aspect-video overflow-hidden bg-gradient-to-br from-primary/10 to-secondary/10">
+                    <div className="aspect-video overflow-hidden bg-white">
                       <img
                         src={related.image_url || 'https://images.unsplash.com/photo-1585776245991-cf89dd7fc73a?w=800'}
                         alt={related.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
                       />
                     </div>
                     <div className="p-5">

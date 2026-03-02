@@ -217,7 +217,7 @@ export default function Index() {
                         className="block card-elevated group overflow-hidden p-0 h-full"
                         aria-label={`Read article: ${article.title}`}
                       >
-                        <div className="aspect-video overflow-hidden bg-muted">
+                        <div className="aspect-video overflow-hidden bg-white">
                           {article.image_url ? (
                             <img
                               src={article.image_url}
@@ -225,7 +225,7 @@ export default function Index() {
                               loading="lazy"
                               width="400"
                               height="225"
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-muted-foreground">

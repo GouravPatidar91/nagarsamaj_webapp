@@ -95,11 +95,11 @@ export default function News() {
             >
               <Link to={`/news/${filteredArticles[0].id}`} className="block group">
                 <div className="flex flex-col md:grid md:grid-cols-2 gap-0 md:gap-8 card-elevated p-0 overflow-hidden">
-                  <div className="aspect-[4/3] md:aspect-auto overflow-hidden">
+                  <div className="aspect-[4/3] md:aspect-auto overflow-hidden bg-white">
                     <img
                       src={filteredArticles[0].image_url || 'https://images.unsplash.com/photo-1585776245991-cf89dd7fc73a?w=800'}
                       alt={filteredArticles[0].title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
                     />
                   </div>
                   <div className="p-6 md:p-8 flex flex-col justify-center">
@@ -131,11 +131,11 @@ export default function News() {
             {filteredArticles.slice(1).map((article) => (
               <motion.div key={article.id} variants={itemVariants}>
                 <Link to={`/news/${article.id}`} className="block card-elevated group overflow-hidden p-0">
-                  <div className="aspect-video overflow-hidden">
+                  <div className="aspect-video overflow-hidden bg-white">
                     <img
                       src={article.image_url || 'https://images.unsplash.com/photo-1585776245991-cf89dd7fc73a?w=800'}
                       alt={article.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
                   <div className="p-6">
