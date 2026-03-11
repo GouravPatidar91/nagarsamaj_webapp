@@ -277,4 +277,30 @@
       transform: translateY(0);
     }
   }
+
+  /* React Quill Overrides */
+  .ql-editor {
+    @apply text-foreground min-h-[200px] text-base;
+  }
+
+  .ql-toolbar {
+    @apply bg-muted border-border rounded-t-md !important;
+  }
+
+  .ql-container {
+    @apply border-border bg-background rounded-b-md !important;
+  }
+
+  .ql-snow .ql-stroke {
+    @apply stroke-foreground !important;
+  }
+
+  .ql-snow .ql-fill,
+  .ql-snow .ql-stroke.ql-fill {
+    @apply fill-foreground !important;
+  }
+
+  .ql-snow .ql-picker {
+    @apply text-foreground !important;
+  }
 }

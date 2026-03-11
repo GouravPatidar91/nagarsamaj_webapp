@@ -18,6 +18,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import {
   Select,
   SelectContent,
@@ -386,13 +388,14 @@ export function AdminArticlesTab() {
               </div>
               <div className="col-span-2">
                 <Label>Content *</Label>
-                <Textarea
-                  value={form.content}
-                  onChange={(e) => setForm({ ...form, content: e.target.value })}
-                  placeholder="Article content..."
-                  rows={6}
-                  className="mt-1"
-                />
+                <div className="mt-1">
+                  <ReactQuill
+                    theme="snow"
+                    value={form.content}
+                    onChange={(val) => setForm({ ...form, content: val })}
+                    className="bg-background text-foreground min-h-[200px]"
+                  />
+                </div>
               </div>
             </div>
           </div>

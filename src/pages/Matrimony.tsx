@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, GraduationCap, Briefcase, Heart, X, User, Plus, Edit, Clock, Upload, Loader2 } from 'lucide-react';
+import { MapPin, GraduationCap, Briefcase, Heart, X, User, Plus, Edit, Clock, Upload, Loader2, Eye } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
 import { Button } from '@/components/ui/button';
@@ -288,10 +288,16 @@ function MatrimonyContent() {
                         </div>
                       </div>
                     </div>
-                    <Button onClick={handleOpenCreateForm} variant="outline">
-                      <Edit className="w-4 h-4 mr-2" />
-                      {t('btn_edit_profile')}
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button onClick={() => setSelectedProfile(myProfile)} variant="outline">
+                        <Eye className="w-4 h-4 mr-2" />
+                        {t('btn_view_profile')}
+                      </Button>
+                      <Button onClick={handleOpenCreateForm} variant="outline">
+                        <Edit className="w-4 h-4 mr-2" />
+                        {t('btn_edit_profile')}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -483,25 +489,27 @@ function MatrimonyContent() {
               )}
 
               <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border/50">
-                <Button
-                  className={`flex-1 ${!interestedProfileIds.includes(selectedProfile.id) ? 'btn-gold' : ''}`}
-                  variant={interestedProfileIds.includes(selectedProfile.id) ? 'secondary' : 'default'}
-                  onClick={() => handleInterest(selectedProfile.id, selectedProfile.full_name, selectedProfile.user_id)}
-                  disabled={interestedProfileIds.includes(selectedProfile.id) || sendInterestMutation.isPending}
-                >
-                  {interestedProfileIds.includes(selectedProfile.id) ? (
-                    <>
-                      <Heart className="w-4 h-4 mr-2 fill-primary text-primary" />
-                      Interest Sent
-                    </>
-                  ) : (
-                    <>
-                      <Heart className="w-4 h-4 mr-2" />
-                      Express Interest
-                    </>
-                  )}
-                </Button>
-                <Button variant="outline" onClick={() => setSelectedProfile(null)}>
+                {selectedProfile.user_id !== user?.id && (
+                  <Button
+                    className={`flex-1 ${!interestedProfileIds.includes(selectedProfile.id) ? 'btn-gold' : ''}`}
+                    variant={interestedProfileIds.includes(selectedProfile.id) ? 'secondary' : 'default'}
+                    onClick={() => handleInterest(selectedProfile.id, selectedProfile.full_name, selectedProfile.user_id)}
+                    disabled={interestedProfileIds.includes(selectedProfile.id) || sendInterestMutation.isPending}
+                  >
+                    {interestedProfileIds.includes(selectedProfile.id) ? (
+                      <>
+                        <Heart className="w-4 h-4 mr-2 fill-primary text-primary" />
+                        Interest Sent
+                      </>
+                    ) : (
+                      <>
+                        <Heart className="w-4 h-4 mr-2" />
+                        Express Interest
+                      </>
+                    )}
+                  </Button>
+                )}
+                <Button variant="outline" onClick={() => setSelectedProfile(null)} className={selectedProfile.user_id === user?.id ? "flex-1" : ""}>
                   <X className="w-4 h-4 mr-2" />
                   Close
                 </Button>
